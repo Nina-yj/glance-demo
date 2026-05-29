@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glance — 읽는 동안, 고객은 또 기다립니다</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:       #6B4EFF;
+      --primary-hover: #5538E8;
+      --primary-light: #EDEEFF;
+      --bg:            #ECEEFF;
+      --border:        #E2E8F0;
+      --text:          #1A202C;
+      --muted:         #718096;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      font-size: 16px;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ─── Reveal ─── */
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 60px; padding: 0 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(13,10,30,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    nav.light {
+      background: rgba(255,255,255,0.94);
+      border-bottom-color: var(--border);
+    }
+    nav.light .nav-logo { color: var(--primary); }
+    nav.light .nav-link { color: var(--muted); }
+    nav.light .nav-link:hover { color: var(--text); }
+    .nav-logo { font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+    .nav-center { display: flex; gap: 28px; }
+    .nav-link { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.65); transition: color 0.15s; }
+    .nav-link:hover { color: #fff; }
+    .nav-cta {
+      background: var(--primary); color: #fff;
+      font-size: 13px; font-weight: 600;
+      padding: 8px 18px; border-radius: 8px;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .nav-cta:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+    /* ─── Hero ─── */
+    .hero {
+      min-height: 100vh;
+      background: #0D0A1E;
+      display: flex; align-items: center; justify-content: center;
+      padding: 120px 40px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 600px;
+      background: radial-gradient(ellipse at center, rgba(107,78,255,0.22) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1100px; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 56px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(107,78,255,0.18);
+      border: 1px solid rgba(107,78,255,0.38);
+      color: #b8a9ff; font-size: 12px; font-weight: 600;
+      padding: 5px 12px; border-radius: 20px;
+      margin-bottom: 22px; letter-spacing: 0.04em;
+    }
+    .hero-headline {
+      font-size: 46px; font-weight: 900;
+      line-height: 1.18; letter-spacing: -1.2px;
+      color: #fff; margin-bottom: 18px;
+    }
+    .hero-headline em { font-style: normal; color: #a78bfa; }
+    .hero-headline .dim { color: rgba(255,255,255,0.38); }
+    .hero-sub {
+      font-size: 17px; color: rgba(255,255,255,0.52);
+      line-height: 1.75; margin-bottom: 34px;
+    }
+    .hero-sub strong { color: rgba(255,255,255,0.85); font-weight: 500; }
+    .hero-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-primary {
+      background: var(--primary); color: #fff;
+      font-size: 15px; font-weight: 700;
+      padding: 14px 28px; border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(107,78,255,0.4);
+      display: inline-block;
+      transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+    }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(107,78,255,0.5); }
+    .btn-ghost-white {
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55);
+      padding: 14px 20px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      display: inline-block; transition: 0.15s;
+    }
+    .btn-ghost-white:hover { color: #fff; border-color: rgba(255,255,255,0.32); }
+    .hero-note { margin-top: 14px; font-size: 12px; color: rgba(255,255,255,0.28); }
+
+    /* ─── Browser Mockup Frame ─── */
+    .mockup-wrap { position: relative; }
+    .browser-frame {
+      background: #1a1730; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.07),
+                  0 28px 70px rgba(0,0,0,0.55),
+                  0 0 50px rgba(107,78,255,0.18);
+    }
+    .browser-bar {
+      background: #120f22; padding: 9px 13px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .dot.r { background: #FF5F57; }
+    .dot.y { background: #FEBC2E; }
+    .dot.g { background: #28C840; }
+    .browser-url {
+      flex: 1; margin-left: 8px;
+      background: rgba(255,255,255,0.06); border-radius: 4px;
+      padding: 2px 9px; font-size: 10px; color: rgba(255,255,255,0.3);
+    }
+
+    /* ─── Mock App ─── */
+    .mock-app {
+      display: flex; height: 470px; background: #ECEEFF;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    /* Left: Inbox */
+    .mi {
+      width: 178px; flex-shrink: 0;
+      background: #fff; border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+    }
+    .mi-header {
+      height: 36px; padding: 0 11px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .mi-title { font-size: 10px; font-weight: 700; color: var(--text); }
+    .mi-badge {
+      background: var(--primary); color: #fff;
+      font-size: 8px; font-weight: 700;
+      padding: 1px 5px; border-radius: 8px;
+    }
+    .mi-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .mi-tab {
+      flex: 1; text-align: center;
+      font-size: 8px; font-weight: 500; color: var(--muted);
+      padding: 5px 0; cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .mi-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+    .mi-list { flex: 1; overflow: hidden; }
+    .mi-item {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+      border-left: 2px solid transparent;
+      position: relative;
+    }
+    .mi-item.active { border-left-color: var(--primary); background: #F5F3FF; }
+    .mi-row1 { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
+    .mi-name { font-size: 9.5px; font-weight: 700; color: var(--text); }
+    .mi-time { font-size: 7.5px; color: var(--muted); }
+    .mi-preview { font-size: 8px; color: var(--muted); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mi-tags { display: flex; gap: 3px; flex-wrap: wrap; }
+    .mi-tag {
+      font-size: 7px; font-weight: 600; padding: 1px 5px; border-radius: 6px;
+    }
+    .mi-tag.wait { background: #EDF2F7; color: #4A5568; }
+    .mi-tag.re   { background: #EBF8FF; color: #2B6CB0; }
+    .mi-tag.angry      { background: #FFF5F5; color: #C53030; }
+    .mi-tag.frustrated { background: #FFFAF0; color: #C05621; }
+    .mi-tag.anxious    { background: #FAF5FF; color: #6B46C1; }
+    .mi-tag.neutral    { background: #F7FAFC; color: #4A5568; }
+    .mi-priority {
+      position: absolute; top: 6px; right: 8px;
+      font-size: 6.5px; font-weight: 700;
+      background: var(--primary); color: #fff;
+      padding: 1px 5px; border-radius: 6px;
+    }
+
+    /* Center: Chat */
+    .mc {
+      flex: 1; background: #fff;
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; min-width: 0;
+    }
+    .mc-header {
+      height: 36px; padding: 0 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; gap: 6px;
+    }
+    .mc-header-left { display: flex; align-items: center; gap: 5px; min-width: 0; }
+    .mc-cname { font-size: 10px; font-weight: 700; color: var(--text); white-space: nowrap; }
+    .mc-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .mc-act {
+      font-size: 7.5px; font-weight: 600; color: var(--muted);
+      padding: 2px 6px; border-radius: 5px;
+      border: 1px solid var(--border); white-space: nowrap;
+    }
+    .mc-act.end { color: #C53030; border-color: #FEB2B2; background: #FFF5F5; }
+
+    .mc-msgs {
+      flex: 1; padding: 9px 10px;
+      display: flex; flex-direction: column; gap: 5px;
+      overflow: hidden;
+    }
+    .mc-bot-row { display: flex; align-items: flex-start; gap: 5px; }
+    .mc-bot-avatar {
+      width: 16px; height: 16px; border-radius: 4px;
+      background: linear-gradient(135deg, #6B4EFF, #a78bfa);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; color: #fff; flex-shrink: 0; margin-top: 1px;
+    }
+    .mc-bot-bubble {
+      background: #F3F4F6; border-radius: 0 7px 7px 7px;
+      padding: 5px 8px; font-size: 8px; color: var(--text);
+      line-height: 1.45; max-width: 78%;
+    }
+    .mc-sender-label { font-size: 7px; color: var(--muted); margin-bottom: 2px; }
+
+    .mc-cust-bubble {
+      background: #F8F8FC; border: 1px solid var(--border);
+      border-radius: 0 7px 7px 7px;
+      padding: 5px 8px; font-size: 8px; color: var(--text);
+      line-height: 1.45; max-width: 78%;
+    }
+
+    .mc-chips {
+      padding: 5px 9px; display: flex; gap: 4px; flex-wrap: nowrap;
+      border-top: 1px solid var(--border); flex-shrink: 0; overflow: hidden;
+    }
+    .mc-chip {
+      font-size: 7.5px; font-weight: 500; color: var(--muted);
+      padding: 2px 7px; border-radius: 8px;
+      border: 1px solid var(--border); white-space: nowrap;
+      background: #FAFAFA;
+    }
+
+    .mc-input-row {
+      padding: 6px 9px; border-top: 1px solid var(--border);
+      display: flex; gap: 4px; flex-shrink: 0;
+    }
+    .mc-input {
+      flex: 1; background: #F7FAFC; border: 1px solid var(--border);
+      border-radius: 5px; height: 22px;
+      font-size: 8px; padding: 0 8px; color: #bbb; line-height: 22px;
+    }
+    .mc-ai {
+      background: var(--primary-light); color: var(--primary);
+      font-size: 7.5px; font-weight: 700;
+      padding: 0 7px; border-radius: 5px; height: 22px; border: none;
+      white-space: nowrap;
+    }
+    .mc-send {
+      background: var(--primary); color: #fff;
+      font-size: 8px; font-weight: 700;
+      padding: 0 9px; border-radius: 5px; height: 22px; border: none;
+    }
+    .mc-time { font-size: 6px; color: #bbb; margin-top: 2px; }
+    .mc-cust-row { display: flex; flex-direction: column; align-items: flex-start; }
+    .mc-cust-label { font-size: 7px; color: var(--muted); margin-bottom: 2px; }
+    .mc-divider {
+      text-align: center; font-size: 6.5px; color: #bbb; margin: 3px 0;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .mc-divider::before, .mc-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* Right: Glance */
+    .mg {
+      width: 210px; flex-shrink: 0;
+      background: #fff; display: flex; flex-direction: column;
+    }
+    .mg-header {
+      height: 36px; padding: 0 11px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; flex-shrink: 0;
+    }
+    .mg-title { font-size: 10px; font-weight: 800; color: var(--primary); }
+
+    .mg-ctx {
+      margin: 8px 10px;
+      background: #F8F7FF;
+      border: 1px solid #ddd6fe;
+      border-radius: 7px;
+      padding: 7px 9px;
+      flex-shrink: 0;
+    }
+    .mg-ctx-label {
+      font-size: 7.5px; font-weight: 700; color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .mg-ctx-text {
+      font-size: 8px; color: #2D3748; line-height: 1.55;
+    }
+
+    .mg-meta {
+      margin: 0 10px 6px;
+      border: 1px solid var(--border);
+      border-radius: 7px; overflow: hidden; flex-shrink: 0;
+    }
+    .mg-meta-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 5px 9px; border-bottom: 1px solid var(--border);
+      font-size: 8px;
+    }
+    .mg-meta-row:last-child { border-bottom: none; }
+    .mg-meta-label { color: var(--muted); font-weight: 500; }
+    .mg-meta-val { font-weight: 700; color: var(--text); }
+    .mg-emo-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 7px; border-radius: 8px;
+      font-size: 7.5px; font-weight: 700;
+    }
+    .mg-emo-badge.angry { background: #FFF5F5; color: #C53030; }
+
+    .mg-openings { margin: 0 10px; flex: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+    .mg-open-label {
+      font-size: 7.5px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px;
+    }
+    .mg-open-item {
+      display: flex; align-items: flex-start; gap: 5px;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 5px 7px; cursor: pointer;
+    }
+    .mg-open-item.selected {
+      background: var(--primary); border-color: var(--primary);
+    }
+    .mg-open-num {
+      width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+      background: var(--primary-light); color: var(--primary);
+      font-size: 7px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
+    }
+    .mg-open-item.selected .mg-open-num { background: rgba(255,255,255,0.25); color: #fff; }
+    .mg-open-text { font-size: 7.5px; color: var(--text); line-height: 1.5; }
+    .mg-open-item.selected .mg-open-text { color: #fff; }
+
+    .mg-copy {
+      margin: 6px 10px 8px;
+      background: #F7FAFC; border: 1px solid var(--border);
+      border-radius: 6px; padding: 5px;
+      font-size: 8px; font-weight: 600; color: var(--muted);
+      text-align: center; cursor: pointer; flex-shrink: 0;
+    }
+
+    /* ─── Stats bar ─── */
+    .stats-bar {
+      background: #fff; border-bottom: 1px solid var(--border); padding: 26px 40px;
+    }
+    .stats-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr);
+    }
+    .stat-item { text-align: center; padding: 0 24px; border-right: 1px solid var(--border); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-size: 30px; font-weight: 900; color: var(--primary);
+      letter-spacing: -1px; line-height: 1; margin-bottom: 5px;
+    }
+    .stat-label { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+    /* ─── Section base ─── */
+    section { padding: 88px 40px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .eyebrow {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .eyebrow-dark { font-size: 11px; font-weight: 700; color: #a78bfa; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+    .section-title { font-size: 34px; font-weight: 800; letter-spacing: -0.7px; line-height: 1.24; margin-bottom: 12px; }
+    .section-sub { font-size: 16px; color: var(--muted); line-height: 1.7; }
+
+    /* ─── Pain ─── */
+    .pain { background: #0D0A1E; padding: 88px 40px; }
+    .pain .section-title { color: #fff; }
+    .pain .section-sub { color: rgba(255,255,255,0.4); margin-bottom: 52px; }
+    .pain-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .pain-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 30px 26px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .pain-card:hover { background: rgba(107,78,255,0.08); border-color: rgba(107,78,255,0.3); }
+    .pain-scenario {
+      display: inline-block; background: rgba(107,78,255,0.15); color: #a78bfa;
+      font-size: 10px; font-weight: 600;
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 14px;
+    }
+    .pain-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px; line-height: 1.4; }
+    .pain-desc { font-size: 13.5px; color: rgba(255,255,255,0.42); line-height: 1.75; }
+    .pain-desc em { font-style: normal; color: rgba(255,255,255,0.75); }
+
+    /* ─── Solution ─── */
+    .solution { background: #fff; }
+    .solution-intro { max-width: 600px; margin-bottom: 56px; }
+    .feature-list { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .feature-card {
+      border-radius: 18px; padding: 34px 28px;
+      border: 1px solid transparent;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(107,78,255,0.1); }
+    .fc-1 { background: #F5F3FF; border-color: #ddd6fe; }
+    .fc-2 { background: #FFF5F5; border-color: #fecaca; }
+    .fc-3 { background: #FFFAF0; border-color: #fde68a; }
+    .feature-icon-wrap {
+      width: 50px; height: 50px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 18px;
+    }
+    .fi-1 { background: rgba(107,78,255,0.12); }
+    .fi-2 { background: rgba(229,62,62,0.1); }
+    .fi-3 { background: rgba(221,107,32,0.1); }
+    .feature-title { font-size: 17px; font-weight: 700; margin-bottom: 9px; }
+    .feature-desc { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+    .feature-detail { margin-top: 14px; font-size: 12.5px; font-weight: 700; color: var(--primary); }
+
+    /* ─── How it works ─── */
+    .how { background: #F8F7FF; }
+    .steps-wrap {
+      display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr;
+      align-items: center; margin-top: 52px;
+    }
+    .step {
+      background: #fff; border-radius: 14px; padding: 28px 24px;
+      border: 1px solid var(--border); text-align: center;
+    }
+    .step-num {
+      width: 46px; height: 46px; background: var(--primary); color: #fff;
+      font-size: 17px; font-weight: 800; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .step-title { font-size: 14px; font-weight: 700; margin-bottom: 7px; }
+    .step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .step-arrow { text-align: center; color: #c4b5fd; font-size: 20px; }
+
+    /* ─── Testimonials ─── */
+    .testimonials { background: #fff; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 48px; }
+    .testi-card {
+      background: #FAFAFA; border: 1px solid var(--border);
+      border-radius: 16px; padding: 26px 22px;
+    }
+    .testi-stars { display: flex; gap: 2px; margin-bottom: 12px; }
+    .star { color: #F59E0B; font-size: 13px; }
+    .testi-quote { font-size: 13.5px; color: var(--text); line-height: 1.75; margin-bottom: 18px; }
+    .testi-quote::before {
+      content: '"'; font-size: 36px; line-height: 1; color: #ddd6fe;
+      display: block; margin-bottom: 4px; font-family: Georgia, serif;
+    }
+    .testi-profile { display: flex; align-items: center; gap: 10px; }
+    .testi-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .av-1 { background: linear-gradient(135deg,#6B4EFF,#a78bfa); }
+    .av-2 { background: linear-gradient(135deg,#E53E3E,#FC8181); }
+    .av-3 { background: linear-gradient(135deg,#DD6B20,#F6AD55); }
+    .testi-name { font-size: 12px; font-weight: 700; }
+    .testi-role { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    /* ─── For who ─── */
+    .for-who { background: #F8F7FF; }
+    .who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .who-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .who-item {
+      display: flex; align-items: flex-start; gap: 11px;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 11px; padding: 13px 15px;
+    }
+    .who-check {
+      width: 20px; height: 20px; background: var(--primary); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 10px; flex-shrink: 0; margin-top: 1px;
+    }
+    .who-text { font-size: 13.5px; color: var(--text); line-height: 1.55; }
+
+    /* ─── Pricing ─── */
+    .pricing { background: #fff; }
+    .pricing-intro { text-align: center; max-width: 540px; margin: 0 auto 52px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .price-card {
+      border: 1.5px solid var(--border); border-radius: 18px;
+      padding: 34px 28px; background: #fff; position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .price-card:hover { border-color: #c4b5fd; box-shadow: 0 8px 28px rgba(107,78,255,0.08); }
+    .price-card.featured { border-color: var(--primary); border-width: 2px; box-shadow: 0 12px 36px rgba(107,78,255,0.14); }
+    .price-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--primary); color: #fff;
+      font-size: 10px; font-weight: 700; padding: 3px 13px; border-radius: 20px; white-space: nowrap;
+    }
+    .plan-name { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; }
+    .plan-price { font-size: 38px; font-weight: 900; letter-spacing: -1.5px; line-height: 1; margin-bottom: 4px; }
+    .plan-price .won { font-size: 20px; vertical-align: top; margin-top: 5px; display: inline-block; font-weight: 700; }
+    .plan-price .period { font-size: 13px; font-weight: 400; color: var(--muted); }
+    .plan-desc { font-size: 12px; color: var(--muted); margin: 8px 0 20px; }
+    .plan-divider { height: 1px; background: var(--border); margin-bottom: 18px; }
+    .plan-features { list-style: none; margin-bottom: 24px; }
+    .plan-features li { font-size: 13px; color: var(--muted); padding: 5px 0; display: flex; align-items: flex-start; gap: 7px; }
+    .chk { color: var(--primary); font-weight: 700; flex-shrink: 0; }
+    .chk-g { color: #CBD5E0; flex-shrink: 0; }
+    .plan-cta { display: block; text-align: center; padding: 12px; border-radius: 9px; font-size: 13px; font-weight: 700; transition: 0.15s; }
+    .plan-cta-outline { border: 1.5px solid var(--border); color: var(--text); }
+    .plan-cta-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .plan-cta-fill { background: var(--primary); color: #fff; }
+    .plan-cta-fill:hover { background: var(--primary-hover); }
+
+    /* ─── FAQ ─── */
+    .faq { background: #F8F7FF; }
+    .faq-list { max-width: 700px; display: flex; flex-direction: column; gap: 8px; margin-top: 40px; }
+    .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; cursor: pointer;
+      font-size: 13.5px; font-weight: 600; color: var(--text);
+      user-select: none; gap: 12px;
+    }
+    .faq-q:hover { color: var(--primary); }
+    .faq-icon {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; flex-shrink: 0;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--primary); color: #fff; }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .faq-item.open .faq-a { max-height: 200px; }
+    .faq-a-inner {
+      padding: 14px 20px 16px; font-size: 13.5px; color: var(--muted); line-height: 1.75;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── CTA Banner ─── */
+    .cta-banner { background: #0D0A1E; padding: 96px 40px; text-align: center; position: relative; overflow: hidden; }
+    .cta-banner::before {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 800px; height: 400px;
+      background: radial-gradient(ellipse at center, rgba(107,78,255,0.28) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; max-width: 580px; margin: 0 auto; }
+    .cta-banner h2 { font-size: 36px; font-weight: 900; color: #fff; letter-spacing: -0.7px; line-height: 1.24; margin-bottom: 14px; }
+    .cta-banner h2 em { font-style: normal; color: #a78bfa; }
+    .cta-banner p { font-size: 15px; color: rgba(255,255,255,0.48); margin-bottom: 36px; line-height: 1.7; }
+    .btn-cta-white {
+      display: inline-block; background: #fff; color: var(--primary);
+      font-size: 16px; font-weight: 800; padding: 17px 38px; border-radius: 11px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-cta-white:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(0,0,0,0.38); }
+    .cta-note { margin-top: 14px; font-size: 11.5px; color: rgba(255,255,255,0.22); }
+
+    /* ─── Footer ─── */
+    footer { background: #06040F; padding: 48px 40px 28px; }
+    .footer-top {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding-bottom: 28px; border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .footer-logo { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 5px; }
+    .footer-tagline { font-size: 12px; color: rgba(255,255,255,0.28); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 12.5px; color: rgba(255,255,255,0.38); transition: color 0.15s; }
+    .footer-links a:hover { color: rgba(255,255,255,0.8); }
+    .footer-copy { max-width: 1100px; margin: 20px auto 0; font-size: 11px; color: rgba(255,255,255,0.18); }
+
+    /* ─── Mock: 정렬 바 ─── */
+    .mi-sort {
+      display: flex; gap: 3px; padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      background: #FAFBFF; flex-shrink: 0;
+    }
+    .mi-sort-btn {
+      font-size: 7px; font-weight: 600;
+      padding: 2px 6px; border-radius: 8px;
+      border: 1px solid var(--border);
+      color: var(--muted); white-space: nowrap;
+      background: transparent;
+    }
+    .mi-sort-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* ─── Mock: 고객 정보 카드 ─── */
+    .mg-info {
+      margin: 6px 10px 4px;
+      border: 1px solid var(--border);
+      border-radius: 7px; padding: 6px 9px; flex-shrink: 0;
+    }
+    .mg-info-caution { border-color: #FCD34D; background: linear-gradient(to bottom, #FFFDF0 0%, #fff 30px); }
+    .mg-info-title {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 4px; font-size: 7px; font-weight: 700; color: var(--muted);
+    }
+    .mg-caution-badge {
+      font-size: 6px; font-weight: 700; color: #92400E;
+      background: #FEF3C7; border: 1px solid #FCD34D;
+      padding: 1px 4px; border-radius: 6px; white-space: nowrap;
+    }
+    .mg-info-row { display: flex; align-items: center; justify-content: space-between; padding: 1.5px 0; font-size: 7.5px; }
+    .mg-info-label { color: var(--muted); font-weight: 500; }
+    .mg-info-val { font-weight: 700; color: var(--text); }
+    .mg-val-angry { color: #C53030; font-weight: 700; font-size: 7.5px; }
+
+    /* ─── Mock: 이전 상담 이력 ─── */
+    .mg-history { margin: 4px 10px 0; flex-shrink: 0; overflow: hidden; }
+    .mg-hist-item {
+      background: #F8FAFC; border: 1px solid var(--border);
+      border-radius: 5px; padding: 4px 6px; margin-top: 3px;
+    }
+    .mg-hist-meta { display: flex; gap: 3px; align-items: center; font-size: 6px; margin-bottom: 2px; }
+    .mg-hist-date { color: var(--muted); }
+    .mg-hist-type { background: var(--primary-light); color: var(--primary); font-weight: 700; padding: 0 3px; border-radius: 3px; }
+    .mg-hist-ok { color: #166534; background: #F0FDF4; padding: 0 3px; border-radius: 3px; font-weight: 700; }
+    .mg-hist-summary { font-size: 6.5px; color: var(--muted); line-height: 1.4; }
+
+    /* ─── 기능 카드 추가 2종 ─── */
+    .feature-list-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 22px; margin-top: 22px; }
+    .fc-4 { background: #F0FDF4; border-color: #86efac; }
+    .fc-5 { background: #EFF6FF; border-color: #bfdbfe; }
+    .fi-4 { background: rgba(22,163,74,0.1); }
+    .fi-5 { background: rgba(59,130,246,0.1); }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 960px) {
+      .hero-inner, .who-grid { grid-template-columns: 1fr; }
+      .pain-grid, .feature-list, .feature-list-2, .testi-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .steps-wrap { grid-template-columns: 1fr; gap: 14px; }
+      .step-arrow { transform: rotate(90deg); }
+      .hero-headline { font-size: 32px; }
+      .section-title { font-size: 26px; }
+      nav { padding: 0 20px; }
+      .nav-center { display: none; }
+      section, .pain { padding: 68px 20px; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); gap: 20px; }
+      .stat-item { border-right: none; }
+      .footer-top { flex-direction: column; gap: 20px; }
+      .mock-app { height: 280px; }
+      .mi { width: 130px; }
+      .mg { width: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav id="nav">
+  <span class="nav-logo">⚡ Glance</span>
+  <div class="nav-center">
+    <a href="#solution" class="nav-link">기능</a>
+    <a href="#how" class="nav-link">작동 방식</a>
+    <a href="#pricing" class="nav-link">요금제</a>
+    <a href="#faq" class="nav-link">FAQ</a>
+  </div>
+  <a href="index.html" class="nav-cta">데모 체험 →</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow">⚡ CS 상담 매니저를 위한 AI 레이어</div>
+      <h1 class="hero-headline">
+        읽는 동안,<br>
+        <em>고객은 또</em><br>
+        <span class="dim">기다립니다</span>
+      </h1>
+      <p class="hero-sub">
+        챗봇에서 매니저로 전환된 고객은 <strong>이미 한 번 실망한 상태</strong>입니다.<br>
+        그 상태에서 10초를 더 기다리게 하지 마세요.
+      </p>
+      <div class="hero-actions">
+        <a href="index.html" class="btn-primary">무료 데모 체험하기 →</a>
+        <a href="#how" class="btn-ghost-white">작동 방식 보기</a>
+      </div>
+      <p class="hero-note">5분 안에 연동 완료 · 14일 전 기능 무료</p>
+    </div>
+
+    <div class="mockup-wrap">
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="browser-url">app.glance.so/inbox</span>
+        </div>
+        <div class="mock-app">
+
+          <!-- Left: Inbox -->
+          <div class="mi">
+            <div class="mi-header">
+              <span class="mi-title">상담 인박스</span>
+              <span class="mi-badge">8</span>
+            </div>
+            <div class="mi-tabs">
+              <span class="mi-tab active">진행중</span>
+              <span class="mi-tab">보류중</span>
+              <span class="mi-tab">종료됨</span>
+            </div>
+            <div class="mi-sort">
+              <span class="mi-sort-btn active">감정강도↓</span>
+              <span class="mi-sort-btn">대기시간</span>
+              <span class="mi-sort-btn">재문의</span>
+            </div>
+            <div class="mi-list">
+              <div class="mi-item active">
+                <div class="mi-row1">
+                  <span class="mi-name">황혜란</span>
+                  <span class="mi-time">09:52</span>
+                </div>
+                <div class="mi-preview">도대체 언제 오는 건가요? 이미 어...</div>
+                <div class="mi-tags">
+                  <span class="mi-tag wait">⏱ 14분</span>
+                  <span class="mi-tag re">재입 2회</span>
+                  <span class="mi-tag angry">분노</span>
+                </div>
+                <span class="mi-priority">먼저 처리</span>
+              </div>
+              <div class="mi-item">
+                <div class="mi-row1">
+                  <span class="mi-name">김다희</span>
+                  <span class="mi-time">09:56</span>
+                </div>
+                <div class="mi-preview">처음부터 소음이 심했는데 왜 제...</div>
+                <div class="mi-tags">
+                  <span class="mi-tag wait">⏱ 10분</span>
+                  <span class="mi-tag re">재입 1회</span>
+                  <span class="mi-tag angry">분노</span>
+                </div>
+              </div>
+              <div class="mi-item">
+                <div class="mi-row1">
+                  <span class="mi-name">박유하</span>
+                  <span class="mi-time">09:57</span>
+                </div>
+                <div class="mi-preview">오전부터 세 번이나 들어왔는데...</div>
+                <div class="mi-tags">
+                  <span class="mi-tag wait">⏱ 9분</span>
+                  <span class="mi-tag re">재입 3회</span>
+                  <span class="mi-tag angry">분노</span>
+                </div>
+              </div>
+              <div class="mi-item">
+                <div class="mi-row1">
+                  <span class="mi-name">송순근</span>
+                  <span class="mi-time">09:59</span>
+                </div>
+                <div class="mi-preview">결제까지 됐는데 품절이라니요...</div>
+                <div class="mi-tags">
+                  <span class="mi-tag wait">⏱ 7분</span>
+                  <span class="mi-tag re">재입 1회</span>
+                  <span class="mi-tag frustrated">불만</span>
+                </div>
+              </div>
+              <div class="mi-item">
+                <div class="mi-row1">
+                  <span class="mi-name">설숙자</span>
+                  <span class="mi-time">10:00</span>
+                </div>
+                <div class="mi-preview">아직 출고도 안 됐다고 했는데...</div>
+                <div class="mi-tags">
+                  <span class="mi-tag wait">⏱ 6분</span>
+                  <span class="mi-tag anxious">불안</span>
+                </div>
+              </div>
+              <div class="mi-item">
+                <div class="mi-row1">
+                  <span class="mi-name">이태훈 <span style="color:var(--muted);font-weight:400">· 지수</span></span>
+                  <span class="mi-time">10:01</span>
+                </div>
+                <div class="mi-preview">265인데 270으로 교환 가능한가요?</div>
+                <div class="mi-tags">
+                  <span class="mi-tag wait">⏱ 5분</span>
+                  <span class="mi-tag re">재입 1회</span>
+                  <span class="mi-tag frustrated">불만</span>
+                </div>
+              </div>
+              <div class="mi-item">
+                <div class="mi-row1">
+                  <span class="mi-name">박현식 <span style="color:var(--muted);font-weight:400">· 서연</span></span>
+                  <span class="mi-time">10:04</span>
+                </div>
+                <div class="mi-preview">아직 출고 전이면 주소 바꿀 수...</div>
+                <div class="mi-tags">
+                  <span class="mi-tag wait">⏱ 2분</span>
+                  <span class="mi-tag neutral">냉정</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center: Chat -->
+          <div class="mc">
+            <div class="mc-header">
+              <div class="mc-header-left">
+                <span class="mc-cname">황혜란</span>
+              </div>
+              <div class="mc-actions">
+                <span class="mc-act">→ 이관</span>
+                <span class="mc-act">⏱ 보류</span>
+                <span class="mc-act end">✓ 종료</span>
+              </div>
+            </div>
+            <div class="mc-msgs">
+              <div class="mc-bot-row">
+                <div class="mc-bot-avatar">🤖</div>
+                <div>
+                  <div class="mc-sender-label">챗봇</div>
+                  <div class="mc-bot-bubble">불편을 드려 죄송합니다. 주문번호를 알려주시겠어요?</div>
+                  <div class="mc-time">오후 06:39</div>
+                </div>
+              </div>
+              <div class="mc-cust-row">
+                <div class="mc-cust-label">고객</div>
+                <div class="mc-cust-bubble">GN-20260518-441요. 어제도 물어봤는데 답이 없었잖아요</div>
+                <div class="mc-time">오후 06:39</div>
+              </div>
+              <div class="mc-bot-row">
+                <div class="mc-bot-avatar">🤖</div>
+                <div>
+                  <div class="mc-sender-label">챗봇</div>
+                  <div class="mc-bot-bubble">확인했습니다. 현재 "배송 준비중" 상태인데, 택배사 측 정보를 추가로 확인해야 할 것 같습니다.</div>
+                  <div class="mc-time">오후 06:40</div>
+                </div>
+              </div>
+              <div class="mc-cust-row">
+                <div class="mc-cust-label">고객</div>
+                <div class="mc-cust-bubble">도대체 언제 오는 건가요? 이미 어제도 연락했는데 답장도 없었잖아요.</div>
+                <div class="mc-time">오후 06:40</div>
+              </div>
+              <div class="mc-bot-row">
+                <div class="mc-bot-avatar">🤖</div>
+                <div>
+                  <div class="mc-sender-label">챗봇</div>
+                  <div class="mc-bot-bubble">죄송합니다. 정확한 확인을 위해 담당자와 연결해드리겠습니다.</div>
+                  <div class="mc-time">오후 06:41</div>
+                </div>
+              </div>
+              <div class="mc-divider">지금부터 매니저</div>
+            </div>
+            <div class="mc-input-row">
+              <span class="mc-input">답변을 입력하세요...</span>
+              <button class="mc-ai">✨ AI 초안</button>
+              <button class="mc-send">전송</button>
+            </div>
+          </div>
+
+          <!-- Right: Glance -->
+          <div class="mg">
+            <div class="mg-header">
+              <span class="mg-title">⚡ Glance</span>
+            </div>
+            <div class="mg-info mg-info-caution">
+              <div class="mg-info-title">
+                <span>👤 고객 정보</span>
+                <span class="mg-caution-badge">⚠️ 주의 고객</span>
+              </div>
+              <div class="mg-info-row">
+                <span class="mg-info-label">문의 유형</span>
+                <span class="mg-val-angry">배송 지연</span>
+              </div>
+              <div class="mg-info-row">
+                <span class="mg-info-label">구매 제품</span>
+                <span class="mg-info-val">원목 수납 캐비닛</span>
+              </div>
+            </div>
+            <div class="mg-ctx">
+              <div class="mg-ctx-label">⚡ 상담 맥락</div>
+              <div class="mg-ctx-text">4일째 배송 상태 변동 없음. 어제 연락했으나 답변 없어 불신 누적. 2회 재문의·14분 대기. 배송사 직접 확인 및 일정 제시 필요.</div>
+            </div>
+            <div class="mg-openings">
+              <div class="mg-open-label">✍️ 추천 첫 마디</div>
+              <div class="mg-open-item selected">
+                <span class="mg-open-text">혜란님, 어제 연락 주셨는데 답을 못 드려 죄송합니다. 지금 바로 배송사에 직접 확인해서 일정 안내드리겠습니다.</span>
+              </div>
+              <div class="mg-open-item">
+                <span class="mg-open-text">GN-441 확인했습니다. 배송사에 직접 연락해 정확한 날짜 바로 안내드리겠습니다.</span>
+              </div>
+            </div>
+            <div class="mg-history">
+              <div class="mg-open-label">📂 이전 상담 이력</div>
+              <div class="mg-hist-item">
+                <div class="mg-hist-meta">
+                  <span class="mg-hist-date">05.20</span>
+                  <span class="mg-hist-type">배송 문의</span>
+                  <span class="mg-hist-ok">처리완료</span>
+                </div>
+                <div class="mg-hist-summary">배송 연기 1회 문의. 배송사 확인 안내 후 마무리.</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.mock-app -->
+      </div><!-- /.browser-frame -->
+    </div>
+  </div>
+</section>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="stat-num">10s<span style="font-size:16px;font-weight:500;color:var(--muted)"> → </span>0s</div>
+      <div class="stat-label">전환 컨텍스트<br>파악 시간</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-num">4</div>
+      <div class="stat-label">단계 감정 분류<br>분노·불만·불안·냉정</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-num">3</div>
+      <div class="stat-label">클릭 한 번으로<br>오프닝 후보 제안</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-num">14일</div>
+      <div class="stat-label">전 기능 무료 체험<br>지금 바로 시작</div>
+    </div>
+  </div>
+</div>
+
+<!-- Pain -->
+<section class="pain">
+  <div class="container">
+    <div class="eyebrow-dark reveal">공감</div>
+    <h2 class="section-title reveal">매일 반복되는 이 장면,<br>매니저 탓이 아닙니다</h2>
+    <p class="section-sub reveal" style="margin-bottom:52px;">소수로 CS를 운영한다면, 이 장면들이 낯설지 않을 겁니다.</p>
+    <div class="pain-grid">
+      <div class="pain-card reveal">
+        <span class="pain-scenario">챗봇이 처리 못한 순간</span>
+        <h3 class="pain-title">"대화창 열었더니<br>메시지가 12개네요"</h3>
+        <p class="pain-desc">스크롤을 내립니다. <em>고객은 이미 '또 처음부터 설명해야 하나요?'를 타이핑 중입니다.</em> 읽는 10초가, 불에 기름이 됩니다.</p>
+      </div>
+      <div class="pain-card reveal reveal-delay-1">
+        <span class="pain-scenario">첫 마디 선택</span>
+        <h3 class="pain-title">"어떻게 도와드릴까요?"<br>라고 했다가 폭발</h3>
+        <p class="pain-desc">감정을 모른 채 꺼낸 첫 마디는 분노한 고객에게 <em>'당신은 내 상황을 전혀 모른다'</em>는 신호입니다.</p>
+      </div>
+      <div class="pain-card reveal reveal-delay-2">
+        <span class="pain-scenario">세 번째 돌아온 고객</span>
+        <h3 class="pain-title">세 번째 돌아온 고객,<br>전 담당자가 뭘 했는지</h3>
+        <p class="pain-desc">전 담당자가 뭘 약속했는지, 고객이 몇 번 왔는지. <em>조각난 히스토리를 이어 붙이다</em> 고객이 먼저 포기합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Solution -->
+<section class="solution" id="solution">
+  <div class="container">
+    <div class="solution-intro">
+      <div class="eyebrow reveal">핵심 기능</div>
+      <h2 class="section-title reveal">그래서 Glance입니다</h2>
+      <p class="section-sub reveal">전환 버튼을 누르는 순간, 읽어야 할 것을 이미 읽어드립니다.<br>첫 마디는 당신이 고르면 됩니다.</p>
+    </div>
+    <div class="feature-list">
+      <div class="feature-card fc-1 reveal">
+        <div class="feature-icon-wrap fi-1">⚡</div>
+        <h3 class="feature-title">전환 컨텍스트</h3>
+        <p class="feature-desc">AI가 챗봇 대화를 2~3문장으로 압축합니다. 클릭 전에 이미 읽힌 대화 — 더 이상 스크롤하지 마세요.</p>
+        <p class="feature-detail">→ 10초 읽기를 0초로</p>
+      </div>
+      <div class="feature-card fc-2 reveal reveal-delay-1">
+        <div class="feature-icon-wrap fi-2">🌡️</div>
+        <h3 class="feature-title">감정 온도</h3>
+        <p class="feature-desc">분노 · 불만 · 불안 · 냉정 4단계. 첫 마디를 고르기 전에 응대 전략이 먼저 결정됩니다.</p>
+        <p class="feature-detail">→ 감정 파악 후 전략 먼저</p>
+      </div>
+      <div class="feature-card fc-3 reveal reveal-delay-2">
+        <div class="feature-icon-wrap fi-3">✍️</div>
+        <h3 class="feature-title">추천 첫 마디</h3>
+        <p class="feature-desc">상황에 맞는 첫 마디 후보 여러 개. 고민 없이 클릭하면 입력창에 바로 들어갑니다. 나머지는 당신의 몫입니다.</p>
+        <p class="feature-detail">→ 클릭 1번, 전송 준비 완료</p>
+      </div>
+    </div>
+    <div class="feature-list-2">
+      <div class="feature-card fc-4 reveal">
+        <div class="feature-icon-wrap fi-4">📊</div>
+        <h3 class="feature-title">정렬 기준 토글</h3>
+        <p class="feature-desc">감정 강도 · 대기 시간 · 재문의 횟수 — 버튼 하나로 처리 순서를 바꿉니다. 가장 급한 상담이 위로 올라옵니다.</p>
+        <p class="feature-detail">→ 지금 가장 급한 상담 먼저</p>
+      </div>
+      <div class="feature-card fc-5 reveal reveal-delay-1">
+        <div class="feature-icon-wrap fi-5">📂</div>
+        <h3 class="feature-title">이전 상담 이력</h3>
+        <p class="feature-desc">과거 상담 번호 · 해결 여부 · 요약을 한눈에 확인합니다. 처음 보는 고객도 오래 알던 고객처럼 대응할 수 있습니다.</p>
+        <p class="feature-detail">→ 처음 본 고객도 단골처럼</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="eyebrow reveal">작동 방식</div>
+    <h2 class="section-title reveal">클릭 한 번, 준비 완료</h2>
+    <p class="section-sub reveal">전환 순간부터 첫 마디 전송까지. 10초면 충분합니다.</p>
+    <div class="steps-wrap">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3 class="step-title">챗봇이 해결 못한 순간</h3>
+        <p class="step-desc">챗봇이 처리 못한 고객이 매니저에게 넘어옵니다. 그 전환 순간이 시작점입니다.</p>
+      </div>
+      <div class="step-arrow reveal">→</div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">2</div>
+        <h3 class="step-title">AI가 상황 자동 분석</h3>
+        <p class="step-desc">Glance가 대화를 읽고 고객 정보·감정·이전 이력·추천 첫 마디를 오른쪽에 즉시 표시합니다.</p>
+      </div>
+      <div class="step-arrow reveal reveal-delay-1">→</div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">3</div>
+        <h3 class="step-title">오프닝 선택·전송</h3>
+        <p class="step-desc">감정을 확인하고 오프닝을 클릭합니다. 입력창에 바로 들어갑니다. 전송하면 됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+  <div class="container">
+    <div class="eyebrow reveal">사용 후기</div>
+    <h2 class="section-title reveal">직접 써본 매니저들의 이야기</h2>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="testi-quote">오프닝을 고민하다가 고객이 먼저 '왜 이렇게 느리냐'고 했어요. 이제는 전환되는 순간 감정을 보고 제가 먼저 공감 문장을 칩니다. 순서가 바뀌었어요.</p>
+        <div class="testi-profile">
+          <div class="testi-avatar av-1">J</div>
+          <div><div class="testi-name">jisu****</div><div class="testi-role">소규모 이커머스 CS 1인 운영</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal reveal-delay-1">
+        <div class="testi-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="testi-quote">오프닝 추천이 진짜 달라요. 비슷한 상황인데도 미묘하게 다른 뉘앙스가 나와서 클릭하면 바로 쓸 수 있어요. 혼자 쓰는데 팀이 생긴 것 같은 느낌입니다.</p>
+        <div class="testi-profile">
+          <div class="testi-avatar av-2">M</div>
+          <div><div class="testi-name">mina****</div><div class="testi-role">상담 플랫폼 1인 운영자</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal reveal-delay-2">
+        <div class="testi-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="testi-quote">재인입 고객 대응이 제일 힘들었어요. 이제는 '안녕하세요'가 아니라 '지난번 배송 건 말씀이시죠?'로 시작할 수 있어요. 고객 반응이 완전히 달라졌습니다.</p>
+        <div class="testi-profile">
+          <div class="testi-avatar av-3">C</div>
+          <div><div class="testi-name">csop****</div><div class="testi-role">5인 이커머스 팀 CS 리더</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- For who -->
+<section class="for-who">
+  <div class="container">
+    <div class="who-grid">
+      <div>
+        <div class="eyebrow reveal">추천 대상</div>
+        <h2 class="section-title reveal">이런 분이라면<br>Glance가 딱입니다</h2>
+        <p class="section-sub reveal" style="margin-top:12px;">CS 도구를 바꾸는 게 아닙니다.<br>지금 쓰는 상담 플랫폼 위에 올라갑니다.</p>
+      </div>
+      <ul class="who-list">
+        <li class="who-item reveal"><span class="who-check">✓</span><span class="who-text">챗봇·상담 플랫폼으로 CS를 운영 중인 소규모 이커머스 운영자</span></li>
+        <li class="who-item reveal reveal-delay-1"><span class="who-check">✓</span><span class="who-text">하루 수십 건 상담 중 챗봇이 못 해결한 문의가 반복되는 분</span></li>
+        <li class="who-item reveal reveal-delay-1"><span class="who-check">✓</span><span class="who-text">챗봇 대화를 처음부터 읽느라 응대가 늦어지는 경험을 하고 있는 분</span></li>
+        <li class="who-item reveal reveal-delay-2"><span class="who-check">✓</span><span class="who-text">고객 감정을 파악 못한 채 첫 마디를 꺼내는 게 불안한 분</span></li>
+        <li class="who-item reveal reveal-delay-2"><span class="who-check">✓</span><span class="who-text">1~5인 팀으로 CS 효율을 높이고 싶은 팀 리더</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="pricing-intro">
+      <div class="eyebrow reveal">요금제</div>
+      <h2 class="section-title reveal">팀 규모에 맞게<br>지금 당장 시작하세요</h2>
+      <p class="section-sub reveal" style="margin-top:10px;">모든 플랜은 <strong>14일 전 기능 무료 체험</strong> 포함.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">무료</div>
+        <p class="plan-desc">매니저 1명, 지금 바로 시작</p>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="chk">✓</span> 매니저 1명</li>
+          <li><span class="chk">✓</span> 월 100건 상담</li>
+          <li><span class="chk">✓</span> 전환 컨텍스트 요약</li>
+          <li><span class="chk">✓</span> 감정 온도 4단계</li>
+          <li><span class="chk-g">—</span> <span style="color:#CBD5E0">추천 오프닝 (Pro↑)</span></li>
+        </ul>
+        <a href="index.html" class="plan-cta plan-cta-outline">무료로 시작하기</a>
+      </div>
+      <div class="price-card featured reveal reveal-delay-1">
+        <div class="price-badge">가장 많이 선택</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><span class="won">₩</span>29,000<span class="period">/월</span></div>
+        <p class="plan-desc">매니저 5명까지, 무제한 상담</p>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="chk">✓</span> 매니저 5명</li>
+          <li><span class="chk">✓</span> 무제한 상담</li>
+          <li><span class="chk">✓</span> 전환 컨텍스트 요약</li>
+          <li><span class="chk">✓</span> 감정 온도 4단계</li>
+          <li><span class="chk">✓</span> 추천 오프닝 3종</li>
+        </ul>
+        <a href="index.html" class="plan-cta plan-cta-fill">14일 무료 체험 →</a>
+      </div>
+      <div class="price-card reveal reveal-delay-2">
+        <div class="plan-name">Team</div>
+        <div class="plan-price"><span class="won">₩</span>79,000<span class="period">/월</span></div>
+        <p class="plan-desc">팀 전체, 이관까지 자동화</p>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="chk">✓</span> 무제한 매니저</li>
+          <li><span class="chk">✓</span> 무제한 상담</li>
+          <li><span class="chk">✓</span> 이관 요약 자동화</li>
+          <li><span class="chk">✓</span> 팀 분석 대시보드</li>
+          <li><span class="chk">✓</span> 전담 CS 지원</li>
+        </ul>
+        <a href="index.html" class="plan-cta plan-cta-outline">문의하기</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="eyebrow reveal">자주 묻는 질문</div>
+    <h2 class="section-title reveal">궁금한 게 있으신가요</h2>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-q">현재 사용 중인 CS 상담 플랫폼에서 바로 쓸 수 있나요?<span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">챗봇 에스컬레이션 기능이 있는 주요 상담 플랫폼과 연동됩니다. 연동 가능 여부는 문의를 통해 확인해드립니다.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">설치나 세팅이 복잡한가요?<span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">상담 플랫폼 계정 연동 후 별도 설정 없이 바로 사용 가능합니다. 챗봇 에스컬레이션 순간 자동으로 작동합니다.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">Starter 무료 플랜은 어떤 기능을 제공하나요?<span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">매니저 1명, 월 100건까지 전환 컨텍스트·감정 온도 기능을 무료로 사용할 수 있습니다. 추천 오프닝은 Pro 플랜부터 제공됩니다.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">Pro와 Team 플랜의 차이는 무엇인가요?<span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Pro(₩29,000/월)는 매니저 5명·무제한 상담, Team(₩79,000/월)은 무제한 매니저·이관 요약 자동화·팀 분석 대시보드·전담 CS 지원이 추가됩니다.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">14일 무료 체험 후 자동 결제되나요?<span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">체험 기간 종료 후 별도 결제 수단 등록 없이는 자동 청구되지 않습니다. 원하는 플랜을 직접 선택해 시작하세요.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-banner">
+  <div class="cta-inner">
+    <h2>지금 이 순간에도<br>매니저는 <em>읽고 있습니다</em></h2>
+    <p>Glance를 쓰는 팀은 전환 순간부터 다릅니다.<br>5분 연동, 첫 상담부터 바로 씁니다.</p>
+    <a href="index.html" class="btn-cta-white">무료 데모 체험하기 →</a>
+    <p class="cta-note">5분 연동 · 14일 전 기능 무료 · 언제든 취소</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">⚡ Glance</div>
+      <div class="footer-tagline">고객 전환 순간, 10초 읽기를 0초로</div>
+    </div>
+    <div class="footer-links">
+      <a href="index.html">데모 체험</a>
+      <a href="#pricing">요금제</a>
+      <a href="#faq">FAQ</a>
+      <a href="mailto:hello@glance.so">문의하기</a>
+    </div>
+  </div>
+  <div class="footer-copy">© 2025 Glance. All rights reserved. · 이 페이지의 일부 후기 콘텐츠는 AI 기술을 활용해 제작되었습니다.</div>
+</footer>
+
+<script>
+  // Nav light/dark switch
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('light', window.scrollY > window.innerHeight * 0.88);
+  }, { passive: true });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+</body>
+</html>

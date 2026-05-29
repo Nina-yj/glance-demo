@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glance — CS 경험 레이어</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ① Left: Inbox Panel -->
+    <div class="panel panel-inbox">
+      <div class="panel-header">
+        <span class="panel-title">상담 인박스</span>
+        <span class="inbox-badge" id="inbox-count">0</span>
+      </div>
+      <div class="inbox-tabs">
+        <button class="inbox-tab active" data-tab="open">진행중</button>
+        <button class="inbox-tab" data-tab="snoozed">보류중</button>
+        <button class="inbox-tab" data-tab="closed">종료됨</button>
+      </div>
+      <div class="sort-bar">
+        <span class="sort-label">정렬</span>
+        <div class="sort-buttons">
+          <button class="sort-btn active" data-sort="priority" data-label="감정 강도">감정 강도 ↓</button>
+          <button class="sort-btn" data-sort="waiting" data-label="대기 시간">대기 시간</button>
+          <button class="sort-btn" data-sort="reentry" data-label="재문의 횟수">재문의 횟수</button>
+        </div>
+      </div>
+      <div class="inbox-list" id="inbox-list">
+        <!-- Populated by app.js → renderInbox() -->
+      </div>
+    </div>
+
+    <!-- ② Center: Chat Panel -->
+    <div class="panel panel-chat">
+      <div class="panel-header">
+        <div class="chat-header-customer" id="chat-customer-name">
+          <span class="panel-title">고객을 선택하세요</span>
+        </div>
+        <div class="chat-header-actions">
+          <button class="chat-action-btn chat-action-handoff" id="btn-handoff-header" title="다른 담당자에게 이관" disabled>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 7h8M7 4l3 3-3 3"/>
+              <path d="M11 2v10"/>
+            </svg>
+            이관
+          </button>
+          <button class="chat-action-btn" id="btn-snooze" title="상담 보류" disabled>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <circle cx="7" cy="7" r="5.5"/>
+              <polyline points="7,4 7,7 9,9"/>
+            </svg>
+            보류
+          </button>
+          <button class="chat-action-btn chat-action-end" id="btn-end-chat" title="상담 종료" disabled>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="2,7 5.5,10.5 12,3.5"/>
+            </svg>
+            종료
+          </button>
+        </div>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="state-empty">왼쪽 목록에서 상담을 선택하세요</div>
+      </div>
+      <div class="chat-footer" id="chat-footer">
+        <div class="quick-reply-chips">
+          <button class="quick-reply-chip" data-text="죄송합니다, 바로 확인해드리겠습니다.">죄송합니다, 바로 확인</button>
+          <button class="quick-reply-chip" data-text="잠시만 기다려 주세요.">잠시만요</button>
+          <button class="quick-reply-chip" data-text="처리 완료됐습니다. 추가 문의 있으시면 말씀해 주세요.">처리 완료</button>
+          <button class="quick-reply-chip" data-text="추가로 도움이 필요하신 사항이 있으신가요?">추가 문의</button>
+          <button class="quick-reply-chip" data-text="주문 번호를 알려주시면 바로 확인하겠습니다.">주문번호 요청</button>
+        </div>
+        <textarea
+          id="chat-input"
+          class="chat-input"
+          placeholder="답변을 입력하세요... (Enter 전송 / Shift+Enter 줄바꿈)"
+          rows="3"
+        ></textarea>
+        <div class="chat-actions">
+          <button class="btn btn-secondary" id="btn-ai-draft">✨ AI 초안</button>
+          <button class="btn btn-primary" id="btn-send">전송</button>
+        </div>
+      </div>
+      <div class="chat-footer-closed" id="chat-footer-closed">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="7" cy="7" r="5.5"/>
+          <line x1="4.5" y1="4.5" x2="9.5" y2="9.5"/>
+          <line x1="9.5" y1="4.5" x2="4.5" y2="9.5"/>
+        </svg>
+        <span id="chat-footer-closed-text">종료된 상담입니다</span>
+      </div>
+    </div>
+
+    <!-- ③ Right: Glance Panel -->
+    <div class="panel panel-glance">
+      <div class="panel-header">
+        <span class="panel-title">⚡ Glance</span>
+      </div>
+      <div class="glance-content" id="glance-content">
+        <div class="state-empty">고객을 선택하면<br>컨텍스트가 표시됩니다</div>
+      </div>
+      <div class="glance-sticky-footer" id="glance-sticky-footer" style="display:none">
+        <div class="gsf-preview" id="gsf-preview-text"></div>
+        <button class="gsf-copy-btn" id="gsf-copy-btn">📋 입력창에 추가</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Script load order: config → mock → service → app -->
+  <script src="config.js"></script>
+  <script src="mock-data.js"></script>
+  <script src="data-service.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
