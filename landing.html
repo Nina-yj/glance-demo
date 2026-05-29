@@ -26,6 +26,7 @@
       background: #fff;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      word-break: keep-all;
     }
     a { text-decoration: none; color: inherit; }
 
@@ -101,11 +102,12 @@
       font-size: 46px; font-weight: 900;
       line-height: 1.18; letter-spacing: -1.2px;
       color: #fff; margin-bottom: 18px;
+      text-wrap: balance;
     }
     .hero-headline em { font-style: normal; color: #a78bfa; }
     .hero-headline .dim { color: rgba(255,255,255,0.38); }
     .hero-sub {
-      font-size: 17px; color: rgba(255,255,255,0.52);
+      font-size: 17px; color: rgba(255,255,255,0.75);
       line-height: 1.75; margin-bottom: 34px;
     }
     .hero-sub strong { color: rgba(255,255,255,0.85); font-weight: 500; }
@@ -129,12 +131,38 @@
     .hero-note { margin-top: 14px; font-size: 12px; color: rgba(255,255,255,0.28); }
 
     /* ─── Browser Mockup Frame ─── */
-    .mockup-wrap { position: relative; }
+    .mockup-wrap {
+      position: relative;
+      transform: perspective(1200px) rotateX(4deg) rotateY(-3deg);
+      transform-style: preserve-3d;
+    }
+    .mockup-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 15% 8%;
+      background: rgba(107,78,255,0.38);
+      filter: blur(70px);
+      border-radius: 50%;
+      z-index: -1;
+    }
     .browser-frame {
       background: #1a1730; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.07),
-                  0 28px 70px rgba(0,0,0,0.55),
-                  0 0 50px rgba(107,78,255,0.18);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.10),
+        0 8px 20px rgba(0,0,0,0.28),
+        0 28px 64px rgba(0,0,0,0.55),
+        0 64px 120px rgba(0,0,0,0.32),
+        0 0 70px rgba(107,78,255,0.22);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .mockup-wrap:hover .browser-frame {
+      transform: translateY(-6px);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.13),
+        0 12px 28px rgba(0,0,0,0.30),
+        0 36px 80px rgba(0,0,0,0.60),
+        0 80px 140px rgba(0,0,0,0.36),
+        0 0 90px rgba(107,78,255,0.30);
     }
     .browser-bar {
       background: #120f22; padding: 9px 13px;
@@ -386,14 +414,22 @@
 
     /* ─── Stats bar ─── */
     .stats-bar {
-      background: #fff; border-bottom: 1px solid var(--border); padding: 26px 40px;
+      background: linear-gradient(to bottom, #f8f7ff 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--border); padding: 28px 40px;
     }
     .stats-inner {
       max-width: 1100px; margin: 0 auto;
       display: grid; grid-template-columns: repeat(4,1fr);
     }
-    .stat-item { text-align: center; padding: 0 24px; border-right: 1px solid var(--border); }
+    .stat-item {
+      text-align: center; padding: 10px 24px;
+      border-right: 1px solid var(--border);
+    }
     .stat-item:last-child { border-right: none; }
+    .stat-icon {
+      font-size: 22px; display: block;
+      margin-bottom: 8px; line-height: 1;
+    }
     .stat-num {
       font-size: 30px; font-weight: 900; color: var(--primary);
       letter-spacing: -1px; line-height: 1; margin-bottom: 5px;
@@ -408,35 +444,54 @@
       letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px;
     }
     .eyebrow-dark { font-size: 11px; font-weight: 700; color: #a78bfa; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
-    .section-title { font-size: 34px; font-weight: 800; letter-spacing: -0.7px; line-height: 1.24; margin-bottom: 12px; }
+    .section-title { font-size: 34px; font-weight: 800; letter-spacing: -0.7px; line-height: 1.24; margin-bottom: 12px; text-wrap: balance; }
     .section-sub { font-size: 16px; color: var(--muted); line-height: 1.7; }
 
     /* ─── Pain ─── */
-    .pain { background: #0D0A1E; padding: 88px 40px; }
+    .pain {
+      background: linear-gradient(160deg, #0b0920 0%, #110c28 100%);
+      padding: 88px 40px;
+      position: relative; overflow: hidden;
+    }
+    .pain::before {
+      content: '';
+      position: absolute; top: -15%; left: 50%;
+      transform: translateX(-50%);
+      width: 65%; height: 65%;
+      background: radial-gradient(ellipse, rgba(107,78,255,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
     .pain .section-title { color: #fff; }
-    .pain .section-sub { color: rgba(255,255,255,0.4); margin-bottom: 52px; }
+    .pain .section-sub { color: rgba(255,255,255,0.42); margin-bottom: 52px; }
     .pain-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
     .pain-card {
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top: 2px solid rgba(107,78,255,0.38);
       border-radius: 16px; padding: 30px 26px;
-      transition: border-color 0.2s, background 0.2s;
+      transition: border-color 0.2s, background 0.2s, transform 0.22s;
     }
-    .pain-card:hover { background: rgba(107,78,255,0.08); border-color: rgba(107,78,255,0.3); }
+    .pain-card:hover {
+      background: rgba(107,78,255,0.08);
+      border-color: rgba(107,78,255,0.35);
+      border-top-color: rgba(107,78,255,0.65);
+      transform: translateY(-3px);
+    }
     .pain-scenario {
-      display: inline-block; background: rgba(107,78,255,0.15); color: #a78bfa;
+      display: inline-block; background: rgba(107,78,255,0.18); color: #b39dfc;
       font-size: 10px; font-weight: 600;
       padding: 3px 10px; border-radius: 20px; margin-bottom: 14px;
     }
-    .pain-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px; line-height: 1.4; }
-    .pain-desc { font-size: 13.5px; color: rgba(255,255,255,0.42); line-height: 1.75; }
-    .pain-desc em { font-style: normal; color: rgba(255,255,255,0.75); }
+    .pain-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px; line-height: 1.4; text-wrap: balance; }
+    .pain-desc { font-size: 13.5px; color: rgba(255,255,255,0.46); line-height: 1.75; }
+    .pain-desc em { font-style: normal; color: rgba(255,255,255,0.80); }
 
     /* ─── Solution ─── */
     .solution { background: #fff; }
     .solution-intro { max-width: 600px; margin-bottom: 56px; }
-    .feature-list { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .feature-list { display: grid; grid-template-columns: repeat(2,1fr); gap: 22px; }
     .feature-card {
-      border-radius: 18px; padding: 34px 28px;
+      border-radius: 18px; padding: 36px 32px;
       border: 1px solid transparent;
       transition: transform 0.2s, box-shadow 0.2s;
     }
@@ -444,8 +499,9 @@
     .fc-1 { background: #F5F3FF; border-color: #ddd6fe; }
     .fc-2 { background: #FFF5F5; border-color: #fecaca; }
     .fc-3 { background: #FFFAF0; border-color: #fde68a; }
+    .fc-5 { background: #EFF6FF; border-color: #bfdbfe; }
     .feature-icon-wrap {
-      width: 50px; height: 50px; border-radius: 14px;
+      width: 56px; height: 56px; border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
       font-size: 22px; margin-bottom: 18px;
     }
@@ -460,7 +516,7 @@
     .how { background: #F8F7FF; }
     .steps-wrap {
       display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr;
-      align-items: center; margin-top: 52px;
+      align-items: stretch; margin-top: 52px;
     }
     .step {
       background: #fff; border-radius: 14px; padding: 28px 24px;
@@ -472,9 +528,13 @@
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 14px;
     }
-    .step-title { font-size: 14px; font-weight: 700; margin-bottom: 7px; }
+    .step-title { font-size: 14px; font-weight: 700; margin-bottom: 7px; text-wrap: balance; }
     .step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
-    .step-arrow { text-align: center; color: #c4b5fd; font-size: 20px; }
+    .step-arrow {
+      display: flex; align-items: center; justify-content: center;
+      color: #c4b5fd; font-size: 20px;
+    }
+    .step-platforms { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
 
     /* ─── Testimonials ─── */
     .testimonials { background: #fff; }
@@ -585,7 +645,7 @@
       pointer-events: none;
     }
     .cta-inner { position: relative; z-index: 1; max-width: 580px; margin: 0 auto; }
-    .cta-banner h2 { font-size: 36px; font-weight: 900; color: #fff; letter-spacing: -0.7px; line-height: 1.24; margin-bottom: 14px; }
+    .cta-banner h2 { font-size: 36px; font-weight: 900; color: #fff; letter-spacing: -0.7px; line-height: 1.24; margin-bottom: 14px; text-wrap: balance; }
     .cta-banner h2 em { font-style: normal; color: #a78bfa; }
     .cta-banner p { font-size: 15px; color: rgba(255,255,255,0.48); margin-bottom: 36px; line-height: 1.7; }
     .btn-cta-white {
@@ -659,17 +719,13 @@
     .mg-hist-ok { color: #166534; background: #F0FDF4; padding: 0 3px; border-radius: 3px; font-weight: 700; }
     .mg-hist-summary { font-size: 6.5px; color: var(--muted); line-height: 1.4; }
 
-    /* ─── 기능 카드 추가 2종 ─── */
-    .feature-list-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 22px; margin-top: 22px; }
-    .fc-4 { background: #F0FDF4; border-color: #86efac; }
-    .fc-5 { background: #EFF6FF; border-color: #bfdbfe; }
-    .fi-4 { background: rgba(22,163,74,0.1); }
     .fi-5 { background: rgba(59,130,246,0.1); }
 
-    /* ─── Responsive ─── */
+    /* ─── Responsive: 태블릿 (≤960px) ─── */
     @media (max-width: 960px) {
       .hero-inner, .who-grid { grid-template-columns: 1fr; }
-      .pain-grid, .feature-list, .feature-list-2, .testi-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .pain-grid, .feature-list, .testi-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .feature-list { grid-template-columns: 1fr; }
       .steps-wrap { grid-template-columns: 1fr; gap: 14px; }
       .step-arrow { transform: rotate(90deg); }
       .hero-headline { font-size: 32px; }
@@ -683,6 +739,65 @@
       .mock-app { height: 280px; }
       .mi { width: 130px; }
       .mg { width: 160px; }
+      .mockup-wrap { display: none; }
+    }
+
+    /* ─── Mobile: 일반 폰 (≤640px) ─── */
+    @media (max-width: 640px) {
+      /* Nav */
+      nav { padding: 0 16px; }
+      .nav-cta { padding: 7px 14px; font-size: 12px; }
+
+      /* Hero: .hero 클래스 명시도가 section 선택자보다 높아 직접 오버라이드 필요 */
+      .hero { padding: 88px 20px 56px; }
+      .hero-headline { font-size: 28px; letter-spacing: -0.6px; }
+      .hero-sub { font-size: 15px; }
+      /* 3열 목업은 폰에서 레이아웃 붕괴 → 숨김 처리 */
+      .mockup-wrap { display: none; }
+      /* 히어로 버튼 세로 스택 + 전체 너비 */
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .btn-primary { text-align: center; padding: 14px 20px; }
+      .btn-ghost-white { text-align: center; padding: 13px 20px; }
+
+      /* 섹션 공통 여백 축소 */
+      section, .pain { padding: 56px 20px; }
+      .section-title { font-size: 22px; }
+      .section-sub { font-size: 15px; }
+
+      /* Stats 바 */
+      .stats-bar { padding: 22px 20px; }
+      .stat-num { font-size: 24px; }
+      .stat-label { font-size: 11px; }
+
+      /* Pain 카드 */
+      .pain-title { font-size: 15px; }
+      .pain-desc { font-size: 13px; }
+
+      /* Feature 카드 */
+      .feature-card { padding: 24px 20px; }
+      .feature-title { font-size: 16px; }
+
+      /* Pricing 카드 */
+      .price-card { padding: 28px 20px; }
+      .plan-price { font-size: 32px; }
+
+      /* CTA 배너 */
+      .cta-banner { padding: 64px 20px; }
+      .cta-banner h2 { font-size: 28px; }
+      .btn-cta-white { font-size: 14px; padding: 14px 28px; }
+
+      /* Footer */
+      footer { padding: 40px 20px 24px; }
+      .footer-links { flex-wrap: wrap; gap: 14px; }
+    }
+
+    /* ─── Mobile: 소형 폰 (≤375px: iPhone SE 등) ─── */
+    @media (max-width: 375px) {
+      .hero-headline { font-size: 26px; }
+      .hero-sub { font-size: 14px; }
+      .stat-num { font-size: 20px; }
+      .hero-note { font-size: 10px; }
+      .section-title { font-size: 20px; }
     }
   </style>
 </head>
@@ -704,7 +819,7 @@
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-content">
-      <div class="hero-eyebrow">⚡ CS 상담 매니저를 위한 AI 레이어</div>
+      <div class="hero-eyebrow">⚡ CS 상담 매니저를 위한 AI 도우미</div>
       <h1 class="hero-headline">
         읽는 동안,<br>
         <em>고객은 또</em><br>
@@ -943,23 +1058,47 @@
 <div class="stats-bar">
   <div class="stats-inner">
     <div class="stat-item reveal">
+      <span class="stat-icon">⚡</span>
       <div class="stat-num">10s<span style="font-size:16px;font-weight:500;color:var(--muted)"> → </span>0s</div>
       <div class="stat-label">전환 컨텍스트<br>파악 시간</div>
     </div>
     <div class="stat-item reveal reveal-delay-1">
+      <span class="stat-icon">🌡️</span>
       <div class="stat-num">4</div>
       <div class="stat-label">단계 감정 분류<br>분노·불만·불안·냉정</div>
     </div>
     <div class="stat-item reveal reveal-delay-2">
-      <div class="stat-num">3</div>
-      <div class="stat-label">클릭 한 번으로<br>오프닝 후보 제안</div>
+      <span class="stat-icon">✍️</span>
+      <div class="stat-num" style="font-size:26px">3가지</div>
+      <div class="stat-label">오프닝 후보 제안<br>클릭 1번에 입력창으로</div>
     </div>
     <div class="stat-item reveal reveal-delay-3">
+      <span class="stat-icon">🎁</span>
       <div class="stat-num">14일</div>
       <div class="stat-label">전 기능 무료 체험<br>지금 바로 시작</div>
     </div>
   </div>
 </div>
+
+<!-- For who -->
+<section class="for-who">
+  <div class="container">
+    <div class="who-grid">
+      <div>
+        <div class="eyebrow reveal">추천 대상</div>
+        <h2 class="section-title reveal">이런 분이라면<br>Glance가 딱입니다</h2>
+        <p class="section-sub reveal" style="margin-top:12px;">CS 도구를 바꾸는 게 아닙니다.<br>지금 쓰는 상담 플랫폼 위에 올라갑니다.</p>
+      </div>
+      <ul class="who-list">
+        <li class="who-item reveal"><span class="who-check">✓</span><span class="who-text">챗봇·상담 플랫폼으로 CS를 운영 중인 소규모 이커머스 운영자</span></li>
+        <li class="who-item reveal reveal-delay-1"><span class="who-check">✓</span><span class="who-text">하루 수십 건 상담 중 챗봇이 못 해결한 문의가 반복되는 분</span></li>
+        <li class="who-item reveal reveal-delay-1"><span class="who-check">✓</span><span class="who-text">챗봇 대화를 처음부터 읽느라 응대가 늦어지는 경험을 하고 있는 분</span></li>
+        <li class="who-item reveal reveal-delay-2"><span class="who-check">✓</span><span class="who-text">고객 감정을 파악 못한 채 첫 마디를 꺼내는 게 불안한 분</span></li>
+        <li class="who-item reveal reveal-delay-2"><span class="who-check">✓</span><span class="who-text">1~5인 팀으로 CS 효율을 높이고 싶은 팀 리더</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
 
 <!-- Pain -->
 <section class="pain">
@@ -993,7 +1132,7 @@
     <div class="solution-intro">
       <div class="eyebrow reveal">핵심 기능</div>
       <h2 class="section-title reveal">그래서 Glance입니다</h2>
-      <p class="section-sub reveal">전환 버튼을 누르는 순간, 읽어야 할 것을 이미 읽어드립니다.<br>첫 마디는 당신이 고르면 됩니다.</p>
+      <p class="section-sub reveal">전환 버튼을 누르는 순간,<br>읽어야 할 것을 이미 읽어드립니다. 첫 마디는 당신이 고르면 됩니다.</p>
     </div>
     <div class="feature-list">
       <div class="feature-card fc-1 reveal">
@@ -1013,14 +1152,6 @@
         <h3 class="feature-title">추천 첫 마디</h3>
         <p class="feature-desc">상황에 맞는 첫 마디 후보 여러 개. 고민 없이 클릭하면 입력창에 바로 들어갑니다. 나머지는 당신의 몫입니다.</p>
         <p class="feature-detail">→ 클릭 1번, 전송 준비 완료</p>
-      </div>
-    </div>
-    <div class="feature-list-2">
-      <div class="feature-card fc-4 reveal">
-        <div class="feature-icon-wrap fi-4">📊</div>
-        <h3 class="feature-title">정렬 기준 토글</h3>
-        <p class="feature-desc">감정 강도 · 대기 시간 · 재문의 횟수 — 버튼 하나로 처리 순서를 바꿉니다. 가장 급한 상담이 위로 올라옵니다.</p>
-        <p class="feature-detail">→ 지금 가장 급한 상담 먼저</p>
       </div>
       <div class="feature-card fc-5 reveal reveal-delay-1">
         <div class="feature-icon-wrap fi-5">📂</div>
@@ -1043,6 +1174,7 @@
         <div class="step-num">1</div>
         <h3 class="step-title">챗봇이 해결 못한 순간</h3>
         <p class="step-desc">챗봇이 처리 못한 고객이 매니저에게 넘어옵니다. 그 전환 순간이 시작점입니다.</p>
+        <p class="step-platforms">채널톡 · 카카오채널 ·<br>Zendesk · Intercom 등 주요 플랫폼 지원</p>
       </div>
       <div class="step-arrow reveal">→</div>
       <div class="step reveal reveal-delay-1">
@@ -1063,8 +1195,8 @@
 <!-- Testimonials -->
 <section class="testimonials">
   <div class="container">
-    <div class="eyebrow reveal">사용 후기</div>
-    <h2 class="section-title reveal">직접 써본 매니저들의 이야기</h2>
+    <div class="eyebrow reveal">이런 변화가 생겼습니다</div>
+    <h2 class="section-title reveal">Glance를 쓰면 달라지는 것들</h2>
     <div class="testi-grid">
       <div class="testi-card reveal">
         <div class="testi-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
@@ -1094,32 +1226,12 @@
   </div>
 </section>
 
-<!-- For who -->
-<section class="for-who">
-  <div class="container">
-    <div class="who-grid">
-      <div>
-        <div class="eyebrow reveal">추천 대상</div>
-        <h2 class="section-title reveal">이런 분이라면<br>Glance가 딱입니다</h2>
-        <p class="section-sub reveal" style="margin-top:12px;">CS 도구를 바꾸는 게 아닙니다.<br>지금 쓰는 상담 플랫폼 위에 올라갑니다.</p>
-      </div>
-      <ul class="who-list">
-        <li class="who-item reveal"><span class="who-check">✓</span><span class="who-text">챗봇·상담 플랫폼으로 CS를 운영 중인 소규모 이커머스 운영자</span></li>
-        <li class="who-item reveal reveal-delay-1"><span class="who-check">✓</span><span class="who-text">하루 수십 건 상담 중 챗봇이 못 해결한 문의가 반복되는 분</span></li>
-        <li class="who-item reveal reveal-delay-1"><span class="who-check">✓</span><span class="who-text">챗봇 대화를 처음부터 읽느라 응대가 늦어지는 경험을 하고 있는 분</span></li>
-        <li class="who-item reveal reveal-delay-2"><span class="who-check">✓</span><span class="who-text">고객 감정을 파악 못한 채 첫 마디를 꺼내는 게 불안한 분</span></li>
-        <li class="who-item reveal reveal-delay-2"><span class="who-check">✓</span><span class="who-text">1~5인 팀으로 CS 효율을 높이고 싶은 팀 리더</span></li>
-      </ul>
-    </div>
-  </div>
-</section>
-
 <!-- Pricing -->
 <section class="pricing" id="pricing">
   <div class="container">
     <div class="pricing-intro">
       <div class="eyebrow reveal">요금제</div>
-      <h2 class="section-title reveal">팀 규모에 맞게<br>지금 당장 시작하세요</h2>
+      <h2 class="section-title reveal">팀 규모에 맞게, 지금 당장 시작하세요</h2>
       <p class="section-sub reveal" style="margin-top:10px;">모든 플랜은 <strong>14일 전 기능 무료 체험</strong> 포함.</p>
     </div>
     <div class="pricing-grid">
@@ -1178,7 +1290,7 @@
     <div class="faq-list">
       <div class="faq-item reveal">
         <div class="faq-q">현재 사용 중인 CS 상담 플랫폼에서 바로 쓸 수 있나요?<span class="faq-icon">+</span></div>
-        <div class="faq-a"><div class="faq-a-inner">챗봇 에스컬레이션 기능이 있는 주요 상담 플랫폼과 연동됩니다. 연동 가능 여부는 문의를 통해 확인해드립니다.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">채널톡, 카카오채널, Zendesk, Intercom 등 챗봇 에스컬레이션 기능이 있는 플랫폼과 연동됩니다. 목록에 없는 플랫폼은 문의해주세요.</div></div>
       </div>
       <div class="faq-item reveal">
         <div class="faq-q">설치나 세팅이 복잡한가요?<span class="faq-icon">+</span></div>
@@ -1204,7 +1316,7 @@
 <section class="cta-banner">
   <div class="cta-inner">
     <h2>지금 이 순간에도<br>매니저는 <em>읽고 있습니다</em></h2>
-    <p>Glance를 쓰는 팀은 전환 순간부터 다릅니다.<br>5분 연동, 첫 상담부터 바로 씁니다.</p>
+    <p>Glance를 쓰는 팀은 전환 순간부터 다릅니다. 5분 연동, 첫 상담부터 바로 씁니다.</p>
     <a href="index.html" class="btn-cta-white">무료 데모 체험하기 →</a>
     <p class="cta-note">5분 연동 · 14일 전 기능 무료 · 언제든 취소</p>
   </div>
@@ -1224,7 +1336,7 @@
       <a href="mailto:hello@glance.so">문의하기</a>
     </div>
   </div>
-  <div class="footer-copy">© 2025 Glance. All rights reserved. · 이 페이지의 일부 후기 콘텐츠는 AI 기술을 활용해 제작되었습니다.</div>
+  <div class="footer-copy">© 2025 Glance. All rights reserved.</div>
 </footer>
 
 <script>
