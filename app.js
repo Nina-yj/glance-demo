@@ -465,8 +465,37 @@ function renderGlancePanel(customer, glanceData) {
       </button>
     </div>` : '';
 
+  // 분노 고객 대응 가이드 (emotion === 'angry' + angryGuide 데이터 있을 때만)
+  const angryGuideHtml = (customer.emotion === 'angry' && customer.angryGuide) ? (() => {
+    const g = customer.angryGuide;
+    const stepsHtml = g.steps.map(s => `
+      <div class="ag-step">
+        <span class="ag-step-num">${escapeHtml(s.num)}</span>
+        <div class="ag-step-body">
+          <div class="ag-step-title">${escapeHtml(s.title)}</div>
+          <div class="ag-step-desc">${escapeHtml(s.desc)}</div>
+        </div>
+      </div>`).join('');
+    const avoidHtml = g.avoidSaying.map(a =>
+      `<div class="ag-avoid-item">❌ ${escapeHtml(a)}</div>`
+    ).join('');
+    return `
+      <div class="glance-section glance-angry-guide">
+        <div class="glance-section-title">🚨 분노 고객 대응 가이드</div>
+        <div class="ag-cause">
+          <span class="ag-cause-label">분노 원인</span>
+          <span class="ag-cause-text">${escapeHtml(g.cause)}</span>
+        </div>
+        <div class="ag-steps-label">단계별 대응</div>
+        <div class="ag-steps">${stepsHtml}</div>
+        <div class="ag-avoid-label">피해야 할 말</div>
+        <div class="ag-avoid">${avoidHtml}</div>
+      </div>`;
+  })() : '';
+
   container.innerHTML = `
     ${infoBlockHtml}
+    ${angryGuideHtml}
 
     <div class="glance-section">
       <div class="glance-section-title">⚡ 상담 맥락</div>

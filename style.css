@@ -1371,3 +1371,101 @@ img.customer-avatar {
 .ci-phone {
   /* ci-value와 동일 스타일 상속 */
 }
+
+/* ===== 분노 고객 대응 가이드 ===== */
+.glance-angry-guide {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: linear-gradient(to bottom, #FFF5F5 0%, #fff 56px);
+}
+
+.glance-angry-guide .glance-section-title {
+  color: #991B1B;
+}
+
+.ag-cause {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px 10px;
+  background: rgba(239, 68, 68, 0.07);
+  border-radius: 7px;
+  margin-bottom: 12px;
+}
+
+.ag-cause-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #DC2626;
+  white-space: nowrap;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+
+.ag-cause-text {
+  font-size: 12px;
+  color: #1E1E2E;
+  line-height: 1.55;
+}
+
+.ag-steps-label,
+.ag-avoid-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #9CA3AF;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ag-avoid-label {
+  margin-top: 10px;
+}
+
+.ag-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ag-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ag-step-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: #DC2626;
+  min-width: 18px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.ag-step-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1E1E2E;
+  margin-bottom: 1px;
+}
+
+.ag-step-desc {
+  font-size: 11px;
+  color: #6B7280;
+  line-height: 1.55;
+}
+
+.ag-avoid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ag-avoid-item {
+  font-size: 11px;
+  color: #7F1D1D;
+  background: rgba(239, 68, 68, 0.06);
+  border-radius: 5px;
+  padding: 4px 9px;
+  line-height: 1.5;
+}

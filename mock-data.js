@@ -337,6 +337,15 @@ const mockCustomerMeta = {
     customerType:  'caution',
     inquiryType:   '배송 지연',
     purchasedItem: '원목 수납 캐비닛',
+    angryGuide: {
+      cause: '배송 완료 표시 4일째 · 사전 연락 없음',
+      steps: [
+        { num: '①', title: '감정 먼저 인정', desc: '"오래 기다리셨겠습니다"로 시작 — 변명 없이' },
+        { num: '②', title: '원인 간략 설명', desc: '시스템 오류임을 인정, 배송사 책임 전가 금지' },
+        { num: '③', title: '해결 일정 확약', desc: '배송사 직접 확인 후 1시간 이내 결과 안내 약속' },
+      ],
+      avoidSaying: ['"확인해드리겠습니다"만 반복', '"배송사 측 문제라서요"로 책임 회피', '처리 시간 미명시'],
+    },
     pastHistory: [
       { historyId: 'CS-20260520-014', date: '05.20', type: '배송 문의',  summary: '당일 배송 연기 1회 문의. 담당자가 배송사 확인 안내 후 마무리.',      resolved: true,  emotion: 'frustrated' },
       { historyId: 'CS-20260415-003', date: '04.15', type: '반품 요청',  summary: '정상 제품으로 반품 처리 완료. 3일 이내 처리 완료.',                  resolved: true,  emotion: 'neutral'    },
@@ -354,6 +363,15 @@ const mockCustomerMeta = {
     customerType:  'caution',
     inquiryType:   '불량 반품',
     purchasedItem: '공기청정기',
+    angryGuide: {
+      cause: '불량품 배송 + 왕복 배송비 부담 요구',
+      steps: [
+        { num: '①', title: '잘못 인정', desc: '"불량이 맞다면 전적으로 저희 잘못입니다"' },
+        { num: '②', title: '불량 여부 확인', desc: '사진·영상 요청 또는 즉시 수거 일정 안내' },
+        { num: '③', title: '비용 없이 처리', desc: '왕복 배송비 없이 전액 환불 또는 교체 안내' },
+      ],
+      avoidSaying: ['"일반 반품으로는 어렵습니다" 먼저 언급', '"고객님이 먼저 확인해주세요" 요구', '비용 발생 가능성 먼저 언급'],
+    },
     pastHistory: [
       { historyId: 'CS-20260410-007', date: '04.10', type: '배송 요청',  summary: '정상 배송 요청. 재고 처리로 완료.',                                   resolved: true,  emotion: 'frustrated' },
     ]
@@ -373,6 +391,15 @@ const mockCustomerMeta = {
     customerType:  'caution',
     inquiryType:   '오배송',
     purchasedItem: '원피스 2종 세트',
+    angryGuide: {
+      cause: '오배송 + 당일 3회 재문의 · 매번 미결 답변',
+      steps: [
+        { num: '①', title: '누적 불편 인정', desc: '"여러 번 연락하셨는데 해결 못 드려 죄송합니다"' },
+        { num: '②', title: '직접 처리 선언', desc: '"지금 제가 직접 담당해서 끝까지 처리합니다"' },
+        { num: '③', title: '일정 구체적 확약', desc: '오배송 수거 + 정품 발송 날짜를 구체적으로 안내' },
+      ],
+      avoidSaying: ['"다시 확인해드리겠습니다"로 또 미루기', '"이전 담당자가…"로 책임 분산', '처리 일정 없이 막연한 약속'],
+    },
     pastHistory: [
       { historyId: 'CS-20260521-001', date: '05.21', type: '재문의 1회', summary: '오전 9시 1회 문의. "확인 중"이라는 답변으로 마무리.',                 resolved: false, emotion: 'frustrated' },
       { historyId: 'CS-20260521-002', date: '05.21', type: '재문의 2회', summary: '오전 11시 2회 재문의. 담당자 배정 없이 마무리.',                      resolved: false, emotion: 'angry'      },
