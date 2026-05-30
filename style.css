@@ -1287,27 +1287,32 @@ img.customer-avatar {
   text-align: center;
 }
 
-.inbox-section-angry                       { background: var(--angry-bg); }
-.inbox-section-angry .inbox-section-label  { color: var(--angry); }
-.inbox-section-angry .inbox-section-count  { background: #FECACA; color: var(--angry); }
+/* 섹션 헤더 — 배경색 제거, 컬러 점(dot)으로만 구분 */
+.inbox-section-label::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
 
-.inbox-section-frustrated                       { background: var(--frustrated-bg); }
-.inbox-section-frustrated .inbox-section-label  { color: var(--frustrated); }
-.inbox-section-frustrated .inbox-section-count  { background: #FED7AA; color: var(--frustrated); }
-
-.inbox-section-neutral                       { background: var(--neutral-bg); }
-.inbox-section-neutral .inbox-section-label  { color: var(--text-light); }
-.inbox-section-neutral .inbox-section-count  { background: #E2E8F0; color: var(--text-light); }
+.inbox-section-angry .inbox-section-label::before    { background: var(--angry); }
+.inbox-section-frustrated .inbox-section-label::before { background: var(--frustrated); }
+.inbox-section-neutral .inbox-section-label::before  { background: #CBD5E1; }
 
 /* ===== A: 고객 정보 키-값 블록 ===== */
 .glance-customer-info {
   padding: 12px 14px;
 }
 
-/* 문의 유형 — 배지 없이 굵은 감정 컬러 텍스트 */
+/* 문의 유형 — 감정 색 제거, 볼드 다크 텍스트로 통일 */
 .ci-inquiry {
   font-size: 13px;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
 .emotion-text-angry      { color: var(--angry); }
@@ -1317,22 +1322,22 @@ img.customer-avatar {
 
 /* glance-sticky-footer 미사용 — 인라인 추가 버튼 방식으로 교체 */
 
-/* ===== 주의 고객 — 고객 정보 섹션 통합 강조 ===== */
+/* ===== 주의 고객 — 분노 가이드와 동일한 빨강 계열로 통일 ===== */
 .glance-section-caution {
-  border-color: #FCD34D;
-  background: linear-gradient(to bottom, #FFFDF0 0%, #fff 48px);
+  border-color: rgba(239, 68, 68, 0.35);
+  background: linear-gradient(to bottom, #FFF5F5 0%, #fff 48px);
 }
 
 .glance-section-caution .glance-section-title span:first-child {
-  color: #92400E;
+  color: #991B1B;
 }
 
 .ci-caution-badge {
   font-size: 10px;
   font-weight: 700;
-  color: #92400E;
-  background: #FEF3C7;
-  border: 1px solid #FCD34D;
+  color: #991B1B;
+  background: #FEE2E2;
+  border: 1px solid rgba(239, 68, 68, 0.35);
   padding: 2px 7px;
   border-radius: 10px;
   white-space: nowrap;

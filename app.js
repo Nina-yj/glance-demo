@@ -416,7 +416,7 @@ function renderGlancePanel(customer, glanceData) {
       </div>
       <div class="ci-row">
         <span class="ci-label">문의 유형</span>
-        <span class="ci-inquiry emotion-text-${em.key}">${escapeHtml(customer.inquiryType || '-')}</span>
+        <span class="ci-inquiry">${escapeHtml(customer.inquiryType || '-')}</span>
       </div>
       <div class="ci-row">
         <span class="ci-label">구매 제품</span>
