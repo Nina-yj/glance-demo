@@ -692,20 +692,50 @@
       border: 1px solid var(--border);
       border-radius: 7px; padding: 6px 9px; flex-shrink: 0;
     }
-    .mg-info-caution { border-color: #FCD34D; background: linear-gradient(to bottom, #FFFDF0 0%, #fff 30px); }
+    .mg-info-caution { border-color: rgba(239,68,68,0.35); background: #FFF5F5; }
     .mg-info-title {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 4px; font-size: 7px; font-weight: 700; color: var(--muted);
     }
     .mg-caution-badge {
-      font-size: 6px; font-weight: 700; color: #92400E;
-      background: #FEF3C7; border: 1px solid #FCD34D;
+      font-size: 6px; font-weight: 700; color: #991B1B;
+      background: #FEE2E2; border: 1px solid rgba(239,68,68,0.35);
       padding: 1px 4px; border-radius: 6px; white-space: nowrap;
     }
     .mg-info-row { display: flex; align-items: center; justify-content: space-between; padding: 1.5px 0; font-size: 7.5px; }
     .mg-info-label { color: var(--muted); font-weight: 500; }
     .mg-info-val { font-weight: 700; color: var(--text); }
-    .mg-val-angry { color: #C53030; font-weight: 700; font-size: 7.5px; }
+    .mg-val-angry { font-weight: 700; color: var(--text); font-size: 7.5px; }
+
+    /* ─── Mock: 분노 고객 대응 가이드 ─── */
+    .mg-guide {
+      margin: 0 10px 4px;
+      border: 1px solid rgba(239,68,68,0.35);
+      border-radius: 7px; background: #FFF5F5;
+      padding: 6px 9px; flex-shrink: 0;
+    }
+    .mg-guide-title {
+      font-size: 7px; font-weight: 700; color: #991B1B; margin-bottom: 5px;
+    }
+    .mg-guide-cause {
+      display: flex; align-items: flex-start; gap: 4px;
+      background: rgba(239,68,68,0.07); border-radius: 4px;
+      padding: 3px 5px; margin-bottom: 5px;
+    }
+    .mg-guide-cause-label {
+      font-size: 6px; font-weight: 700; color: #DC2626;
+      white-space: nowrap; padding-top: 0.5px;
+    }
+    .mg-guide-cause-text { font-size: 6.5px; color: #2D3748; line-height: 1.4; }
+    .mg-guide-steps-label {
+      font-size: 6px; font-weight: 600; color: #9CA3AF;
+      text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px;
+    }
+    .mg-guide-step {
+      display: flex; align-items: center; gap: 4px; padding: 1.5px 0;
+    }
+    .mg-guide-step-num { font-size: 7px; font-weight: 700; color: #DC2626; min-width: 11px; }
+    .mg-guide-step-title { font-size: 7px; font-weight: 600; color: #2D3748; }
 
     /* ─── Mock: 이전 상담 이력 ─── */
     .mg-history { margin: 4px 10px 0; flex-shrink: 0; overflow: hidden; }
@@ -1020,6 +1050,26 @@
               <div class="mg-info-row">
                 <span class="mg-info-label">구매 제품</span>
                 <span class="mg-info-val">원목 수납 캐비닛</span>
+              </div>
+            </div>
+            <div class="mg-guide">
+              <div class="mg-guide-title">🚨 분노 고객 대응 가이드</div>
+              <div class="mg-guide-cause">
+                <span class="mg-guide-cause-label">분노 원인</span>
+                <span class="mg-guide-cause-text">배송 완료 4일째 · 사전 연락 없음</span>
+              </div>
+              <div class="mg-guide-steps-label">단계별 대응</div>
+              <div class="mg-guide-step">
+                <span class="mg-guide-step-num">①</span>
+                <span class="mg-guide-step-title">감정 먼저 인정</span>
+              </div>
+              <div class="mg-guide-step">
+                <span class="mg-guide-step-num">②</span>
+                <span class="mg-guide-step-title">원인 간략 설명</span>
+              </div>
+              <div class="mg-guide-step">
+                <span class="mg-guide-step-num">③</span>
+                <span class="mg-guide-step-title">해결 일정 확약</span>
               </div>
             </div>
             <div class="mg-ctx">
