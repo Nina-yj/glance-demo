@@ -1325,7 +1325,7 @@ img.customer-avatar {
 /* ===== 주의 고객 — 분노 가이드와 동일한 빨강 계열로 통일 ===== */
 .glance-section-caution {
   border-color: rgba(239, 68, 68, 0.35);
-  background: linear-gradient(to bottom, #FFF5F5 0%, #fff 48px);
+  background: #FFF5F5;
 }
 
 .glance-section-caution .glance-section-title span:first-child {
@@ -1380,7 +1380,7 @@ img.customer-avatar {
 /* ===== 분노 고객 대응 가이드 ===== */
 .glance-angry-guide {
   border-color: rgba(239, 68, 68, 0.35);
-  background: linear-gradient(to bottom, #FFF5F5 0%, #fff 56px);
+  background: #FFF5F5;
 }
 
 .glance-angry-guide .glance-section-title {
