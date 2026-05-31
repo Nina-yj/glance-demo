@@ -320,7 +320,7 @@ function renderConversation(messages, { showHandoffDivider = true, endMarker = n
   }).join('');
 
   const divider = showHandoffDivider
-    ? '<div class="handoff-divider"><span>지금부터 매니저</span></div>'
+    ? '<div class="handoff-divider"><span>지금부터 상담원</span></div>'
     : '';
 
   const endDiv = endMarker
@@ -493,15 +493,16 @@ function renderGlancePanel(customer, glanceData) {
       </div>`;
   })() : '';
 
+  // 상담 맥락 — 문장 단위 불렛 분리
+  const summaryLines = glanceData.summary
+    .split(/\.\s+/)
+    .map(s => s.trim().replace(/\.$/, ''))
+    .filter(s => s.length > 0);
+  const summaryHtml = summaryLines.length > 1
+    ? `<ul class="summary-bullets">${summaryLines.map(l => `<li>${escapeHtml(l)}</li>`).join('')}</ul>`
+    : `<div class="alf-summary-text">${escapeHtml(glanceData.summary)}</div>`;
+
   container.innerHTML = `
-    ${infoBlockHtml}
-    ${angryGuideHtml}
-
-    <div class="glance-section">
-      <div class="glance-section-title">⚡ 상담 맥락</div>
-      <div class="alf-summary-text">${escapeHtml(glanceData.summary)}</div>
-    </div>
-
     <div class="glance-section">
       <div class="glance-section-title">✍️ 추천 첫 마디</div>
       <div class="opening-options" id="${openingId}">
@@ -511,6 +512,14 @@ function renderGlancePanel(customer, glanceData) {
           </div>`).join('')}
       </div>
     </div>
+
+    <div class="glance-section">
+      <div class="glance-section-title">⚡ 상담 맥락</div>
+      ${summaryHtml}
+    </div>
+
+    ${infoBlockHtml}
+    ${angryGuideHtml}
 
     ${historyHtml}
   `;
@@ -876,7 +885,7 @@ function getCustomerTypeConfig(type) {
 }
 
 function getRoleLabel(role) {
-  return { bot: '🤖 챗봇', user: '👤 고객', manager: '🙋 매니저' }[role] || role;
+  return { bot: '🤖 챗봇', user: '👤 고객', manager: '🙋 상담원' }[role] || role;
 }
 
 function formatTime(iso) {
