@@ -551,13 +551,14 @@ img.customer-avatar {
 .opening-option {
   position: relative;
   display: flex;
-  gap: 8px;
-  align-items: center;
+  flex-direction: column;
+  gap: 0;
   padding: 10px 12px;
   border-radius: 8px;
   border: 1.5px solid var(--border);
   background: #fff;
   cursor: pointer;
+  overflow: hidden;
   transition: border-color 0.12s, background 0.12s;
 }
 
@@ -575,10 +576,13 @@ img.customer-avatar {
 .opening-reason {
   display: block;
   font-size: 11px;
-  color: var(--text-secondary);
-  margin-top: 4px;
-  line-height: 1.4;
-  opacity: 0.8;
+  font-weight: 500;
+  color: var(--primary);
+  background: #F1F0FF;
+  border-top: 1px solid #EAE6FF;
+  padding: 5px 12px;
+  margin: 8px -12px -10px;
+  line-height: 1.5;
 }
 
 /* 추가하기 툴팁 */
