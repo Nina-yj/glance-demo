@@ -395,11 +395,15 @@ function renderGlancePanel(customer, glanceData) {
   const ctConfig  = getCustomerTypeConfig(customer.customerType);
   const openingId = `opening-${customer.id}`;
 
-  const openings = Array.isArray(glanceData.openings) && glanceData.openings.length > 0
+  // openings는 { text, reason } 객체 또는 문자열 혼용 허용
+  const rawOpenings = Array.isArray(glanceData.openings) && glanceData.openings.length > 0
     ? glanceData.openings
     : glanceData.opening
       ? [glanceData.opening]
       : ['(오프닝 생성 실패)'];
+  const openings = rawOpenings.map(o =>
+    typeof o === 'string' ? { text: o, reason: null } : o
+  );
 
   // 고객 유형 배지 (주의 고객만)
   const ctBannerHtml = ctConfig ? `
@@ -506,9 +510,10 @@ function renderGlancePanel(customer, glanceData) {
     <div class="glance-section">
       <div class="glance-section-title">✍️ 추천 첫 마디</div>
       <div class="opening-options" id="${openingId}">
-        ${openings.map((text, i) => `
+        ${openings.map((o, i) => `
           <div class="opening-option" data-idx="${i}">
-            <span class="opening-option-text">${escapeHtml(text)}</span>
+            <span class="opening-option-text">${escapeHtml(o.text)}</span>
+            ${o.reason ? `<span class="opening-reason">${escapeHtml(o.reason)}</span>` : ''}
           </div>`).join('')}
       </div>
     </div>
@@ -531,7 +536,7 @@ function renderGlancePanel(customer, glanceData) {
 
   container.querySelectorAll('.opening-option').forEach(opt => {
     opt.addEventListener('click', () => {
-      const text = opt.querySelector('.opening-option-text')?.textContent || '';
+      const text = opt.querySelector('.opening-option-text')?.textContent?.trim() || '';
       const input = document.getElementById('chat-input');
       if (input) { input.value = text; input.focus(); input.setSelectionRange(text.length, text.length); }
       try { if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {}); } catch {}

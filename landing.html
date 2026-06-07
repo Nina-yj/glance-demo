@@ -578,6 +578,40 @@
     }
     .who-text { font-size: 13.5px; color: var(--text); line-height: 1.55; }
 
+    /* ─── Team Ops ─── */
+    .team-ops { background: #F8F7FF; }
+    .team-ops-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+    }
+    .team-ops-card {
+      background: #fff;
+      border: 1.5px solid #E8E4FF;
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .team-ops-icon { font-size: 28px; }
+    .team-ops-title { font-size: 15px; font-weight: 700; color: var(--heading); line-height: 1.4; }
+    .team-ops-desc { font-size: 13.5px; color: var(--text); line-height: 1.6; flex: 1; }
+    .team-ops-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      border-radius: 20px;
+      padding: 3px 10px;
+      align-self: flex-start;
+    }
+    @media (max-width: 768px) {
+      .team-ops-grid { grid-template-columns: 1fr; }
+    }
+
     /* ─── Pricing ─── */
     .pricing { background: #fff; }
     .pricing-intro { text-align: center; max-width: 540px; margin: 0 auto 52px; }
@@ -1119,8 +1153,8 @@
     </div>
     <div class="stat-item reveal reveal-delay-2">
       <span class="stat-icon">✍️</span>
-      <div class="stat-num" style="font-size:26px">3가지</div>
-      <div class="stat-label">오프닝 후보 제안<br>클릭 1번에 입력창으로</div>
+      <div class="stat-num" style="font-size:20px;letter-spacing:-0.5px">맥락 맞춤</div>
+      <div class="stat-label">오프닝 제안<br>추천 이유 함께 표시</div>
     </div>
     <div class="stat-item reveal reveal-delay-3">
       <span class="stat-icon">🎁</span>
@@ -1200,8 +1234,8 @@
       <div class="feature-card fc-3 reveal reveal-delay-2">
         <div class="feature-icon-wrap fi-3">✍️</div>
         <h3 class="feature-title">추천 첫 마디</h3>
-        <p class="feature-desc">상황에 맞는 첫 마디 후보 여러 개. 고민 없이 클릭하면 입력창에 바로 들어갑니다. 나머지는 당신의 몫입니다.</p>
-        <p class="feature-detail">→ 클릭 1번, 전송 준비 완료</p>
+        <p class="feature-desc">상황에 맞는 첫 마디 후보 여러 개. 각 문장 아래 추천 이유(예: '재문의 고객이라 공감 먼저')가 함께 표시돼 왜 이 문장인지 바로 알 수 있습니다.</p>
+        <p class="feature-detail">→ 클릭 1번, 이유까지 이해하고 전송</p>
       </div>
       <div class="feature-card fc-5 reveal reveal-delay-1">
         <div class="feature-icon-wrap fi-5">📂</div>
@@ -1253,7 +1287,7 @@
         <p class="testi-quote">오프닝을 고민하다가 고객이 먼저 '왜 이렇게 느리냐'고 했어요. 이제는 전환되는 순간 감정을 보고 제가 먼저 공감 문장을 칩니다. 순서가 바뀌었어요.</p>
         <div class="testi-profile">
           <div class="testi-avatar av-1">J</div>
-          <div><div class="testi-name">jisu****</div><div class="testi-role">소규모 이커머스 CS 1인 운영</div></div>
+          <div><div class="testi-name">jisu****</div><div class="testi-role">패션 소품 쇼핑몰 · 1인 CS 운영</div></div>
         </div>
       </div>
       <div class="testi-card reveal reveal-delay-1">
@@ -1261,7 +1295,7 @@
         <p class="testi-quote">오프닝 추천이 진짜 달라요. 비슷한 상황인데도 미묘하게 다른 뉘앙스가 나와서 클릭하면 바로 쓸 수 있어요. 혼자 쓰는데 팀이 생긴 것 같은 느낌입니다.</p>
         <div class="testi-profile">
           <div class="testi-avatar av-2">M</div>
-          <div><div class="testi-name">mina****</div><div class="testi-role">상담 플랫폼 1인 운영자</div></div>
+          <div><div class="testi-name">mina****</div><div class="testi-role">생활용품 쇼핑몰 · 챗봇+CS 1인 운영</div></div>
         </div>
       </div>
       <div class="testi-card reveal reveal-delay-2">
@@ -1269,8 +1303,37 @@
         <p class="testi-quote">재인입 고객 대응이 제일 힘들었어요. 이제는 '안녕하세요'가 아니라 '지난번 배송 건 말씀이시죠?'로 시작할 수 있어요. 고객 반응이 완전히 달라졌습니다.</p>
         <div class="testi-profile">
           <div class="testi-avatar av-3">C</div>
-          <div><div class="testi-name">csop****</div><div class="testi-role">5인 이커머스 팀 CS 리더</div></div>
+          <div><div class="testi-name">csop****</div><div class="testi-role">뷰티 이커머스 · 5인 CS팀 리더</div></div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team Manager Section -->
+<section class="team-ops" id="team">
+  <div class="container">
+    <div class="section-label reveal">팀으로 쓰면</div>
+    <h2 class="section-title reveal">팀장·운영자에게 필요한 것도<br>Glance가 챙깁니다</h2>
+    <p class="section-sub reveal">상담사 편의성뿐 아니라, 팀을 운영하는 분들이 진짜 원하는 것을 설계했습니다.</p>
+    <div class="team-ops-grid">
+      <div class="team-ops-card reveal">
+        <div class="team-ops-icon">📊</div>
+        <h3 class="team-ops-title">상담사별 대응 현황 대시보드</h3>
+        <p class="team-ops-desc">누가 어떤 고객을 얼마나 빠르게 처리했는지 한눈에. 개별 피드백과 팀 KPI 관리가 쉬워집니다.</p>
+        <span class="team-ops-badge">Team 플랜</span>
+      </div>
+      <div class="team-ops-card reveal reveal-delay-1">
+        <div class="team-ops-icon">🎓</div>
+        <h3 class="team-ops-title">신규 상담사 온보딩 시간 단축</h3>
+        <p class="team-ops-desc">AI가 맥락과 추천 이유를 함께 보여주기 때문에 신입도 첫날부터 방향을 잡고 대응할 수 있습니다. OJT 부담이 줄어듭니다.</p>
+        <span class="team-ops-badge">Pro · Team 플랜</span>
+      </div>
+      <div class="team-ops-card reveal reveal-delay-2">
+        <div class="team-ops-icon">✅</div>
+        <h3 class="team-ops-title">AI 제안은 참고용, 발송은 상담사가</h3>
+        <p class="team-ops-desc">추천 문장을 클릭해도 입력창에만 들어갑니다. 상담사가 직접 확인하고 수정한 뒤 전송 — 오남용 걱정 없이 운영할 수 있습니다.</p>
+        <span class="team-ops-badge">전 플랜 공통</span>
       </div>
     </div>
   </div>
