@@ -472,9 +472,9 @@ function renderGlancePanel(customer, glanceData) {
   // 분노 고객 대응 가이드 (emotion === 'angry' + angryGuide 데이터 있을 때만)
   const angryGuideHtml = (customer.emotion === 'angry' && customer.angryGuide) ? (() => {
     const g = customer.angryGuide;
-    const stepsHtml = g.steps.map(s => `
+    const stepsHtml = g.steps.map((s, i) => `
       <div class="ag-step">
-        <span class="ag-step-num">${escapeHtml(s.num)}</span>
+        <span class="ag-step-num">${i + 1}</span>
         <div class="ag-step-body">
           <div class="ag-step-title">${escapeHtml(s.title)}</div>
           <div class="ag-step-desc">${escapeHtml(s.desc)}</div>
